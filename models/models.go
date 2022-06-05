@@ -16,7 +16,7 @@ type Content struct {
 	ID        uint   `gorm:"primarykey"`
 	Title     string `gorm:"not null" json:"title"`
 	Contents  string `gorm:"not null" json:"contents"`
-	Comment   string `json:"comment"`
+	Comment   string `gorm:"null" json:"comment"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
@@ -38,7 +38,7 @@ type loginUserRequest struct {
 }
 
 //returns a response when a User logs in
-type userResponse struct {
+type UserResponse struct {
 	Email             string    `json:"email"`
 	PasswordChangedAt time.Time `json:"password_changed_at"`
 	CreatedAt         time.Time `json:"created_at"`
@@ -47,12 +47,12 @@ type userResponse struct {
 //this returns(generates) an acess token to the client
 type loginUserResponse struct {
 	AccessToken string       `json:"access_token"`
-	User        userResponse `json:"user"`
+	User        UserResponse `json:"user"`
 }
 
 //the new user response is used so that the password wont be exposed to the client
-func newUserResponse(response User) userResponse {
-	return userResponse{
+func NewUserResponse(response User) UserResponse {
+	return UserResponse{
 		Email:     response.Email,
 		CreatedAt: response.CreatedAt,
 	}

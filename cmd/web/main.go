@@ -3,12 +3,11 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/Philip-21/proj1/config"
 	"github.com/Philip-21/proj1/database"
 	"github.com/Philip-21/proj1/models"
-	"github.com/joho/godotenv"
+
 	"gorm.io/gorm"
 )
 
@@ -24,21 +23,8 @@ type Repository struct {
 
 func main() {
 
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal(err)
-	}
-	connect := &config.PostgresConfig{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     os.Getenv("DB_PORT"),
-		Password: os.Getenv("DB_PASS"),
-		User:     os.Getenv("DB_USER"),
-		SSLMode:  os.Getenv("DB_SSLMODE"),
-		DBName:   os.Getenv("DB_NAME"),
-	}
-
-	db, err := database.Initdb(connect)
-
+	config.LoadConfig()
+	db, err := database.Initdb(config.Conf)
 	if err != nil {
 		log.Fatal("could not load the database")
 	}

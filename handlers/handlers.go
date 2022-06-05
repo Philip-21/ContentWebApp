@@ -6,7 +6,8 @@ import (
 
 	"github.com/Philip-21/proj1/config"
 	"github.com/Philip-21/proj1/database"
-	"github.com/Philip-21/proj1/middleware"
+
+	// "github.com/Philip-21/proj1/middleware"
 	"github.com/Philip-21/proj1/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -37,7 +38,6 @@ func (r *Repository) CreateContent(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, post)
-
 }
 
 func (r *Repository) GetContent(c *gin.Context) {
@@ -124,11 +124,11 @@ func (r *Repository) UpdateContent(c *gin.Context) {
 
 ////-----users------///
 
-func (server *middleware.Server) CreateUser(ctx *gin.Context) {
+// func (server *middleware.Server) CreateUser(ctx *gin.Context) {
 
-	user, err := server.store.CreateUser(ctx, arg)
+// 	user, err := server.store.CreateUser(ctx, arg)
 
-	rsp := newUserResponse(user)
-	ctx.JSON(http.StatusOK, rsp)
+// 	rsp := models.NewUserResponse(user)
+// 	ctx.JSON(http.StatusOK, rsp)
 
-}
+// }

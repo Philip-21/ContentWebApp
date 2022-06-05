@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"github.com/Philip-21/proj1/config"
+	"github.com/Philip-21/proj1/models"
 	"github.com/stretchr/testify/require"
-	"gorm.io/gorm"
 )
 
-func newTestServer(t *testing.T, store *gorm.DB) *Server {
-	config := config.TokenConfig{
+func newTestServer(t *testing.T, store *models.User) *Server {
+	config := config.Envconfig{
 		TokenSymmetricKey:   "avsvbfhtyruterwfhrytwiquytruyhtit",
 		AccessTokenDuration: time.Minute,
 	}

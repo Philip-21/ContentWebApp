@@ -8,10 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func Initdb(connect *config.PostgresConfig) (*gorm.DB, error) {
+func Initdb(connect *config.Envconfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password%s dbname=%s ",
-		connect.Host, connect.Port, connect.User, connect.Password, connect.DBName,
+		"host=%s port=%s dbname=%s user=%s  password=%s sslmode=%s",
+		connect.Host, connect.Port, connect.DBName, connect.User, connect.Password, connect.SSLMode,
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
