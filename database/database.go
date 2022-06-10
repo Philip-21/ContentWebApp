@@ -20,3 +20,10 @@ func Initdb(connect *config.Envconfig) (*gorm.DB, error) {
 	return db, nil
 
 }
+
+var DB *gorm.DB
+
+// GetDB helps you to get a connection,which will be used for testing
+func GetDB() *gorm.DB {
+	return DB
+}

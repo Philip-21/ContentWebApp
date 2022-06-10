@@ -37,14 +37,15 @@ func GetContentByID(id string, db *gorm.DB) (models.Content, bool, error) {
 
 func DeleteContent(id string, db *gorm.DB) error {
 	var b models.Content
-	if err := db.Where("id = ? ", id).Delete(&b).Error; err != nil {
+	err := db.Where("id = ? ", id).Delete(&b).Error
+	if err != nil {
 		return err
 	}
 	return nil
 }
-
 func UpdateContent(db *gorm.DB, b *models.Content) error {
-	if err := db.Save(&b).Error; err != nil {
+	err := db.Save(&b).Error
+	if err != nil {
 		return err
 	}
 	return nil

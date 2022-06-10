@@ -15,6 +15,5 @@ func Route(app *config.AppConfig) http.Handler {
 	router.POST("/create-content", handlers.Repo.CreateContent)
 	router.DELETE("/delete-content/:id", handlers.Repo.DeleteContent)
 	router.PUT("/update-content", handlers.Repo.UpdateContent)
-
 	return router
 }
