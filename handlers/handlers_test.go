@@ -3,10 +3,8 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -44,14 +42,12 @@ var getContentTest = []struct {
 
 func getCtx(req *http.Request) context.Context
 
-func Test_GetContents(t *testing.T)  {
+func Test_GetContents(t *testing.T) {
 	for _, e := range getContentTest {
 		req, _ := http.NewRequest("GET", e.url, nil)
 		ctx := getCtx(req)
 		req = req.WithContext(ctx)
-		req.RequestURI = e.url //uri encodes the data being sent using http forms 
+		req.RequestURI = e.url //uri encodes the data being sent using http forms
 
-		rt := httptest.NewRecorder()
-		handler := http.HandlerFunc(Repo.GetContent())
-	}}
-
+	}
+}

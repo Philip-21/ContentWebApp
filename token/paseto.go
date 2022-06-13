@@ -8,6 +8,12 @@ import (
 	"github.com/o1egl/paseto"
 )
 
+// a token Maker interface to manage the creation and verification of tokens
+type Maker interface {
+	CreateToken(username string, duration time.Duration) (string, error) //create and sign a new token for a specific username and valid duration.
+	VerifyToken(token string) (*Payload, error)                          //checks if the input token is valid or not.
+}
+
 type PasetoMaker struct {
 	paseto       *paseto.V2
 	symmetricKey []byte
@@ -29,7 +35,7 @@ func NewPasetoMaker(symmetricKey string) (Maker, error) {
 	return maker, nil
 }
 
-//a new paseto create token method
+//create new paseto token
 func (maker *PasetoMaker) CreateToken(username string, duration time.Duration) (string, error) {
 	payload, err := NewPayload(username, duration)
 	if err != nil {
@@ -39,7 +45,7 @@ func (maker *PasetoMaker) CreateToken(username string, duration time.Duration) (
 	return maker.paseto.Encrypt(maker.symmetricKey, payload, nil)
 }
 
-//PASETO VerifyToken metho
+//PASETO VerifyToken method
 func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error) {
 	//declaring an empty payload object to store the decrypted data
 	payload := &Payload{}
@@ -56,3 +62,13 @@ func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error) {
 
 	return payload, nil
 }
+
+// //the function to create the response object
+// func (server *Server) Createuser(ctx *gin.Context) {
+
+// 	//user, err := server.store.
+// 	user, err := server.store.
+
+// 	rsp := models.NewUserResponse()
+// 	ctx.JSON(http.StatusOK, rsp)
+// }

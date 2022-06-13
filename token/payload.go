@@ -7,12 +7,6 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-// a token Maker interface to manage the creation and verification of the tokens
-type Maker interface {
-	CreateToken(username string, duration time.Duration) (string, error) //create and sign a new token for a specific username and valid duration.
-	VerifyToken(token string) (*Payload, error)                          //checks if the input token is valid or not.
-}
-
 type Payload struct {
 	ID        uuid.UUID `json:"id"`
 	Username  string    `json:"username"` //this identifs the token owner
@@ -38,6 +32,7 @@ func NewPayload(username string, duration time.Duration) (*Payload, error) {
 
 var ErrExpiredToken = errors.New("token has expired")
 
+//expiration ofthe payload token
 func (payload *Payload) Valid() error {
 	//If time.Now() is after the payload.ExpiredAt,
 	//then it means that the token has expired

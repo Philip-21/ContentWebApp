@@ -22,7 +22,7 @@ func GetContents(db *gorm.DB) ([]models.Content, error) {
 func GetContentByID(id string, db *gorm.DB) (models.Content, bool, error) {
 	c := models.Content{}
 
-	query := db.Select("books.*")
+	query := db.Select("contents.*")
 	query = query.Group("contents.id")
 	err := query.Where("contents.id = ?", id).First(&c).Error
 	err1 := errors.Is(err, gorm.ErrRecordNotFound)
@@ -52,4 +52,73 @@ func UpdateContent(db *gorm.DB, b *models.Content) error {
 }
 
 //////////Users
-//func CreateUser (db*gorm.DB, )
+
+func GetUser(db *gorm.DB) (models.ContentUser, error) {
+	user := models.ContentUser{}
+	query := db.Select("users.*").Group("users_id")
+	err := query.Find(&user).Error
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func GetUserID(id string, db *gorm.DB) (models.ContentUser, error) {
+	user := models.ContentUser{}
+
+	query := db.Select("content_users.*")
+	query = query.Group("content_users.id")
+	err := query.Where("content_users.id=?", id).First(&user).Error
+	err1 := errors.Is(err, gorm.ErrRecordNotFound)
+	if err != nil && !err1 {
+		return user, err
+	}
+	if err1 {
+		return user, nil
+	}
+	return user, nil
+}
+
+func GetUserEmail(email string, db *gorm.DB) (models.ContentUser, error) {
+	user := models.ContentUser{}
+	choose := db.Select("content_users.*")
+	query := choose.Group("content_users.email")
+	err := query.Where("content_users.email=?", email).First(&user).Error
+	err1 := errors.Is(err, gorm.ErrRecordNotFound)
+	if err != nil && !err1 {
+		return user, err
+	}
+	if err1 {
+		return user, nil
+	}
+	return user, nil
+
+}
+func GetUserPassword(password string, db *gorm.DB) (models.ContentUser, error) {
+	user := models.ContentUser{}
+	choose := db.Select("content_users.*")
+	query := choose.Group("content_users.hashed_password")
+	err := query.Where("content_users.hashed_password=?", password).First(&user).Error
+	err1 := errors.Is(err, gorm.ErrRecordNotFound)
+	if err != nil && !err1 {
+		return user, err
+	}
+	if err1 {
+		return user, nil
+	}
+	return user, nil
+
+}
+
+//this would be used in implementing login handlers
+type AuthUser interface {
+	GetUser(db *gorm.DB) (models.ContentUser, error)
+	GetUserID(id string, db *gorm.DB) (models.ContentUser, error)
+	GetUserEmail(email string, db *gorm.DB) (models.ContentUser, error)
+	GetUserPassword(password string, db *gorm.DB) (models.ContentUser, error)
+}
+
+//a struct for implementing the interface to be used as a configuration for the user handlers
+type Userctx struct {
+	AuthUser
+}
