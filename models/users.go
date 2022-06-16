@@ -8,9 +8,9 @@ import (
 
 type ContentUser struct {
 	gorm.Model
-	ID             uint      `gorm:"primaryKey;auto_increment" json:"id"`
+	ID             uint      `gorm:"primaryKey"`
 	Email          string    `gorm:"not null;unique" json:"email" `
-	HashedPassword string    `gorm:"not null" json:"hashedpassword" `
+	HashedPassword string    `gorm:"not null" json:"password" binding:"required,min=6" `
 	CreatedAt      time.Time // `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt      time.Time
 	DeletedAt      gorm.DeletedAt `gorm:"index"`
@@ -30,7 +30,7 @@ type UserResponse struct {
 }
 
 //this returns(generates) an acess token to the client
-type loginUserResponse struct {
+type LoginUserResponse struct {
 	AccessToken string       `json:"access_token"`
 	User        UserResponse `json:"user"`
 }

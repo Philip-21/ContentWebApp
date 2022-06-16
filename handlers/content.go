@@ -18,24 +18,27 @@ type Repository struct {
 	DB  *gorm.DB
 }
 
-//initializing a new repository
-var Repo *Repository
-
 func (r *Repository) CreateContent(c *gin.Context) {
 
-	post := models.Content{}
+	post := models.Content{
+		//postform returns the specifiedkey from a particular post
+		Title:    c.PostForm("title"),
+		Contents: c.PostForm("contents"),
+		Comment:  c.PostForm("comment"),
+	}
 	//BindJSON passes the 400 status code to the context then returns a pointer or an error
 	err := c.BindJSON(&post)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	r.DB.Create(&post)
 	//putting the post in the database(the Content table )
-	if err := r.DB.Create(&post).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
+	// if err := r.DB.Create(&post).Error; err != nil {
+	// 	c.JSON(http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
 	c.JSON(http.StatusOK, post)
 }
 
@@ -103,7 +106,11 @@ func (r *Repository) UpdateContent(c *gin.Context) {
 		return
 	}
 	//updating the content according to the model format
-	updatedContent := models.Content{}
+	updatedContent := models.Content{
+		Title:    c.PostForm("title"),
+		Contents: c.PostForm("contents"),
+		Comment:  c.PostForm("comment"),
+	}
 	//BindJSON passes the 400 status code to the context then returns a pointer or an error
 	err = c.BindJSON(&updatedContent)
 	if err != nil {
@@ -117,6 +124,6 @@ func (r *Repository) UpdateContent(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	r.GetContent(c)
+	c.JSON(http.StatusOK, "updated Successfully")
+	r.UpdateContent(c)
 }

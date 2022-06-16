@@ -11,7 +11,7 @@ import (
 
 func GetContents(db *gorm.DB) ([]models.Content, error) {
 	contents := []models.Content{}
-	query := db.Select("contents.*").Group("content_id")
+	query := db.Select("contents.*").Group("contents.id")
 	err := query.Find(&contents).Error
 	if err != nil {
 		return contents, err
@@ -55,7 +55,7 @@ func UpdateContent(db *gorm.DB, b *models.Content) error {
 
 func GetUser(db *gorm.DB) (models.ContentUser, error) {
 	user := models.ContentUser{}
-	query := db.Select("users.*").Group("users_id")
+	query := db.Select("content_users.*").Group("content_users.id")
 	err := query.Find(&user).Error
 	if err != nil {
 		return user, err
