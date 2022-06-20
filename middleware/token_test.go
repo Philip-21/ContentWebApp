@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/Philip-21/proj1/config"
+	//"github.com/Philip-21/proj1/handlers"
 	"github.com/Philip-21/proj1/models"
 	"github.com/stretchr/testify/require"
 )
 
-func newTestServer(t *testing.T, store *models.User) *Server {
+func NewTestServer(t *testing.T, store *models.ContentUser) { //*handlers.Repository {
 	config := config.Envconfig{
 		TokenSymmetricKey:   "avsvbfhtyruterwfhrytwiquytruyhtit",
 		AccessTokenDuration: time.Minute,

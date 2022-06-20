@@ -24,3 +24,8 @@ func Test_DeleteContentdb(t *testing.T, id string, db *gorm.DB) error {
 func Test_UpdateContentdb(t *testing.T, b *models.Content, db *gorm.DB) error {
 	return nil
 }
+
+func Test_GetUser(t *testing.T) (models.ContentUser, error) {
+	User := models.ContentUser{}
+	return User, nil
+}

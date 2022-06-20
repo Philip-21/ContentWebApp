@@ -3,16 +3,16 @@ module github.com/Philip-21/proj1
 go 1.18
 
 require (
-	github.com/aead/chacha20poly1305 v0.0.0-20170617001512-233f39982aeb
+	github.com/aead/chacha20poly1305 v0.0.0-20201124145622-1a5aba2a8b29
 	github.com/alexedwards/scs/v2 v2.5.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/o1egl/paseto v1.0.0
 	github.com/spf13/viper v1.12.0
-	github.com/stretchr/testify v1.7.2
-	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
+	github.com/stretchr/testify v1.7.1
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	gorm.io/driver/postgres v1.3.7
-	gorm.io/gorm v1.23.5
+	gorm.io/gorm v1.23.6
 )
 
 require (
@@ -59,5 +59,5 @@ require (
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gopkg.in/yaml.v3 v3.0.0 // indirect
 )

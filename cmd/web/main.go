@@ -5,9 +5,10 @@ import (
 	"log"
 
 	"github.com/Philip-21/proj1/config"
+	"github.com/Philip-21/proj1/middleware"
 
 	"github.com/Philip-21/proj1/database"
-	"github.com/Philip-21/proj1/router"
+	"github.com/Philip-21/proj1/routes"
 )
 
 const portNumber = ":8080"
@@ -25,7 +26,7 @@ func main() {
 
 	//running the application
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
-	r := router.Routes()
+	r := routes.Routes(middleware.TokenRepo)
 	err := r.Run(portNumber)
 	if err != nil {
 		log.Fatal(err)

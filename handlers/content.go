@@ -6,16 +6,21 @@ import (
 
 	"github.com/Philip-21/proj1/config"
 	"github.com/Philip-21/proj1/database"
+	"github.com/Philip-21/proj1/middleware"
 
 	"github.com/Philip-21/proj1/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-//repository for the databse and the application Contents
+//repository for Content Handlers
+// and repository for User handlers  and the configuration for authentication
 type Repository struct {
-	App *config.AppConfig
-	DB  *gorm.DB
+	App        *config.AppConfig
+	DB         *gorm.DB
+	config     config.Envconfig
+	store      *database.Userctx
+	tokenMaker middleware.Maker
 }
 
 func (r *Repository) CreateContent(c *gin.Context) {
@@ -33,12 +38,11 @@ func (r *Repository) CreateContent(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	r.DB.Create(&post)
-	//putting the post in the database(the Content table )
-	// if err := r.DB.Create(&post).Error; err != nil {
-	// 	c.JSON(http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+	////putting the post in the database(the Content table )
+	if err := r.DB.Create(&post).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
 	c.JSON(http.StatusOK, post)
 }
 

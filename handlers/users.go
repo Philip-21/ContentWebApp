@@ -5,43 +5,15 @@ import (
 	"net/http"
 
 	"github.com/Philip-21/proj1/config"
-	"github.com/Philip-21/proj1/database"
-	"github.com/Philip-21/proj1/middleware"
 	"github.com/Philip-21/proj1/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-//the configuration for authentication and repository for User handlers
-type Server struct {
-	App        *config.AppConfig
-	DB         *gorm.DB
-	config     config.Envconfig
-	store      *database.Userctx
-	tokenMaker middleware.Maker
-	router     *gin.Engine //initializing the router for the authentication
-}
-
 //initialize a new repository for users
-var UserRepo *Server
-
-func NewServer(config config.Envconfig, store *database.Userctx) (*Server, error) {
-	tokenMaker, err := middleware.NewPasetoMaker("") //requires a symmetric key string
-	if err != nil {
-		return nil, fmt.Errorf("cannot create token maker: %w", err) //%w is used to wrap the original error.
-	}
-	//paramters for the new server function
-	server := &Server{
-		config:     config,
-		store:      store,
-		tokenMaker: tokenMaker,
-	}
-	server.router.Routes() //new routes initialized
-	return server, nil
-}
 
 //Creating a User Account
-func (r *Server) CreateUser(c *gin.Context) {
+func (r *Repository) CreateUser(c *gin.Context) {
 	create := models.ContentUser{
 		Email:          c.PostForm("email"),
 		HashedPassword: c.PostForm("pasword"),
@@ -61,16 +33,17 @@ func (r *Server) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, create)
 }
 
-func (server *Server) LoginUser(c *gin.Context) {
+func (server *Repository) LoginUser(c *gin.Context) {
 	//the Login  request model
 	var req models.LoginUserRequest
+
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 	//verifying the email
-	user, err := server.store.GetUserID(req.Email, &gorm.DB{}) //gotten from the interface in the database
+	user, err := server.store.GetUserEmail(req.Email, &gorm.DB{}) //gotten from the interface in the database
 	if err != nil {
 		fmt.Println("Invalid Credentials", user)
 		c.JSON(http.StatusInternalServerError, user)

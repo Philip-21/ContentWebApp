@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
@@ -13,7 +14,10 @@ type AppConfig struct {
 	InfoLog  *log.Logger //a standard library that writes information to log files
 	ErrorLog *log.Logger //this allows us to write logs and handle errors efficiently
 	Session  *scs.SessionManager
+	router   *gin.Engine
 }
+
+var Appconfrep *AppConfig
 
 type Envconfig struct {
 	Host                string        `mapstructure:"DB_HOST"`
