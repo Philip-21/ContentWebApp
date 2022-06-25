@@ -17,8 +17,6 @@ type AppConfig struct {
 	router   *gin.Engine
 }
 
-var Appconfrep *AppConfig
-
 type Envconfig struct {
 	Host                string        `mapstructure:"DB_HOST"`
 	Port                string        `mapstructure:"DB_PORT"`

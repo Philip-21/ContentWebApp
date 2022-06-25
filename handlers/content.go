@@ -20,6 +20,8 @@ type Repository struct {
 	DB         *gorm.DB
 	config     config.Envconfig
 	tokenMaker middleware.Maker
+	store      *database.AuthUser
+	router     *gin.Engine
 }
 
 func (r *Repository) CreateContent(c *gin.Context) {

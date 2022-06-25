@@ -87,7 +87,7 @@ func FindByEmail(db *gorm.DB, email string) (models.ContentUser, error) {
 
 //this would be used in implementing login handlers
 type AuthUser interface {
-	GetUserPassword(password string, db *gorm.DB) (models.ContentUser, error)
+	GetUser(db *gorm.DB) (models.ContentUser, error)
 }
 
 //a struct for implementing the interface to be used as a configuration for the user handlers

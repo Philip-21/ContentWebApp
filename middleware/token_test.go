@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/Philip-21/proj1/config"
-	//"github.com/Philip-21/proj1/handlers"
+
 	"github.com/Philip-21/proj1/models"
 	"github.com/stretchr/testify/require"
 )

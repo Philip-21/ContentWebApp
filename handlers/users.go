@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/Philip-21/proj1/config"
 	"github.com/Philip-21/proj1/database"
+	"github.com/Philip-21/proj1/middleware"
 	"github.com/Philip-21/proj1/models"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -61,3 +64,19 @@ func (r *Repository) LoginUser(c *gin.Context) {
 	c.JSON(http.StatusOK, rsp)
 
 }
+
+func GenerateToken(config config.Envconfig, store *database.AuthUser) (*Repository, error) {
+	tokenMaker, err := middleware.NewPasetoMaker("")
+	if err != nil {
+		return nil, fmt.Errorf("cannot create token maker: %w", err) //%w is used to wrap the original error.
+	}
+	server := &Repository{
+		config:     config,
+		store:      store,
+		tokenMaker: tokenMaker,
+	}
+	server.router.Routes()
+	return server, nil
+}
+
+var Repo *Repository

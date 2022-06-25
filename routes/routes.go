@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Routes(app *middleware.TokenServer) *gin.Engine {
+func Routes(app *handlers.Repository) *gin.Engine {
 	router := gin.Default()
 
 	//con* handlers.Server a variable for Content Repository and User Repository

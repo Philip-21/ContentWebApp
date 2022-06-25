@@ -15,17 +15,14 @@ type Maker interface {
 	VerifyToken(token string) (*Payload, error)                       //checks if the input token is valid or not.
 }
 
-//the repo for configuring the token generation
+//the repo for configuring the token generation used of writin tests
 type TokenServer struct {
-	config     config.Envconfig
-	store      *database.Userctx
-	inter      database.AuthUser
+	config config.Envconfig
+	store  *database.Userctx
+	//inter      database.GetUser
 	tokenMaker Maker
 	router     *gin.Engine
 }
-
-//TokenRepo will be used in the main function when parsing it as the  parameters for  Routes
-var TokenRepo *TokenServer
 
 func NewServer(config config.Envconfig, store *database.Userctx) (*TokenServer, error) {
 	tokenMaker, err := NewPasetoMaker("") //requires a symmetric key string
