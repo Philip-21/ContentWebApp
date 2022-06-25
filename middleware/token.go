@@ -19,6 +19,7 @@ type Maker interface {
 type TokenServer struct {
 	config     config.Envconfig
 	store      *database.Userctx
+	inter      database.AuthUser
 	tokenMaker Maker
 	router     *gin.Engine
 }

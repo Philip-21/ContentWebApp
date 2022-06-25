@@ -19,7 +19,6 @@ type Repository struct {
 	App        *config.AppConfig
 	DB         *gorm.DB
 	config     config.Envconfig
-	store      *database.Userctx
 	tokenMaker middleware.Maker
 }
 

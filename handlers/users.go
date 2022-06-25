@@ -1,31 +1,35 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/Philip-21/proj1/config"
+	"github.com/Philip-21/proj1/database"
 	"github.com/Philip-21/proj1/models"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
-//initialize a new repository for users
+//---------------initialize a new repository for users----------------
 
 //Creating a User Account
 func (r *Repository) CreateUser(c *gin.Context) {
-	create := models.ContentUser{
-		Email:          c.PostForm("email"),
-		HashedPassword: c.PostForm("pasword"),
-	}
-	err := c.BindJSON(&create)
+
+	var req models.SigninUserRequest
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		fmt.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	create := models.ContentUser{
+		Email:          req.Email,
+		HashedPassword: string(passwordHash),
+	}
+
+	json := c.BindJSON(&create)
+	if json != nil {
+		c.JSON(http.StatusInternalServerError, json)
 		return
 	}
 	//putting the post in the database(the Content table )
-
 	if err := r.DB.Create(&create).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -33,33 +37,17 @@ func (r *Repository) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, create)
 }
 
-func (server *Repository) LoginUser(c *gin.Context) {
-	//the Login  request model
-	var req models.LoginUserRequest
+func (r *Repository) LoginUser(c *gin.Context) {
+	user, err := database.GetUser(r.DB)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
 
-	err := c.ShouldBindJSON(&req)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
-		return
-	}
-	//verifying the email
-	user, err := server.store.GetUserEmail(req.Email, &gorm.DB{}) //gotten from the interface in the database
-	if err != nil {
-		fmt.Println("Invalid Credentials", user)
-		c.JSON(http.StatusInternalServerError, user)
-		return
-	}
-	//verifying the password
-	passerr := config.CheckPassword(req.Password, user.HashedPassword) //matching the req password to the main ContentUser Password
-	if passerr != nil {
-		fmt.Println("Invalid Credentials", passerr)
-		c.JSON(http.StatusNonAuthoritativeInfo, err)
-		return
-	}
 	//creating  the token
-	accessToken, err := server.tokenMaker.CreateToken(
+	accessToken, err := r.tokenMaker.CreateToken(
 		user.Email,
-		server.config.AccessTokenDuration,
+		r.config.AccessTokenDuration,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
@@ -69,6 +57,7 @@ func (server *Repository) LoginUser(c *gin.Context) {
 		AccessToken: accessToken,
 		User:        models.NewUserResponse(user), //the password wont be exposed to the client after loggin in
 	}
+	c.JSON(http.StatusOK, "logged in succesfully")
 	c.JSON(http.StatusOK, rsp)
 
 }

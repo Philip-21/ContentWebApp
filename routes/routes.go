@@ -25,7 +25,7 @@ func Routes(app *middleware.TokenServer) *gin.Engine {
 		user.Use(middleware.AuthMiddleware(&middleware.PasetoMaker{}))
 
 		user.POST("/signup", api.CreateUser)
-		user.POST("/login", api.LoginUser)
+		//user.POST("/login", api.LoginUser)
 		user.POST("/post-content", api.CreateContent)
 		user.PUT("/update-content/:id", api.UpdateContent)
 		user.DELETE("/delete-content/:id", api.DeleteContent)
