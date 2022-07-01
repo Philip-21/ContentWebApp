@@ -8,12 +8,12 @@ import (
 
 type ContentUser struct {
 	gorm.Model
-	ID             uint      `gorm:"primaryKey"`
-	Email          string    `gorm:"not null;unique" json:"email" `
-	HashedPassword string    `gorm:"size:60;not null" json:"password" `
-	CreatedAt      time.Time // `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt      time.Time
-	DeletedAt      gorm.DeletedAt `gorm:"index"`
+	ID        uint      `gorm:"primaryKey"`
+	Email     string    `gorm:"not null;unique" json:"email" `
+	Password  string    `gorm:"size:60;not null" json:"password" `
+	CreatedAt time.Time // `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 //a login model displayed for  user to login

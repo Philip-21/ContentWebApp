@@ -1,55 +1,48 @@
 package middleware
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-const (
-	authorizationHeaderKey  = "authorization"
-	authorizationTypeBearer = "bearer"
-	authorizationPayloadKey = "authorization_payload"
-)
-
-// AuthMiddleware creates a gin middleware for authorization
-func AuthMiddleware(tokenMaker Maker) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		//extracting the authorization header from the request
-		authorizationHeader := ctx.GetHeader(authorizationHeaderKey)
-
-		if len(authorizationHeader) == 0 {
-			err := errors.New("authorization header is not provided")
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
-			return
-		}
-		////if authorization is given
-		fields := strings.Fields(authorizationHeader)
-		if len(fields) < 2 {
-			err := errors.New("invalid authorization header format")
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
-			return
-		}
-		///authorization bearer
-		authorizationType := strings.ToLower(fields[0])
-		if authorizationType != authorizationTypeBearer {
-			err := fmt.Errorf("unsupported authorization type %s", authorizationType)
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
-			return
-		}
-		//verify the accessToken
-		accessToken := fields[1]
-		payload, err := tokenMaker.VerifyToken(accessToken)
-		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
-			return
-		}
-		//store the payload in the context before passing it t
-
-		ctx.Set(authorizationPayloadKey, payload)
-		ctx.Next()
+func Auth(c *gin.Context) {
+	token, ok := GetToken(c)
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{})
+		return
 	}
+	id, email, err := VerifyJwt(token)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{})
+		return
+	}
+	c.Set("id", id)
+	c.Set("email", email)
+	c.Writer.Header().Set("Authorization", "Bearer "+token)
+	c.Next()
+}
+func GetToken(c *gin.Context) (string, bool) {
+	authValue := c.GetHeader("Authorization")
+	arr := strings.Split(authValue, " ")
+	if len(arr) != 2 {
+		return "", false
+	}
+	authType := strings.Trim(arr[0], "\n\r\t")
+	if strings.ToLower(authType) != strings.ToLower("Bearer") {
+		return "", false
+	}
+	return strings.Trim(arr[1], "\n\t\r"), true
+}
+func GetSession(c *gin.Context) (uint, string, bool) {
+	id, ok := c.Get("id")
+	if !ok {
+		return 0, "", false
+	}
+	email, ok := c.Get("email")
+	if !ok {
+		return 0, "", false
+	}
+	return id.(uint), email.(string), true
 }

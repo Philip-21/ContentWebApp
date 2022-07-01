@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/Philip-21/proj1/models"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -52,45 +53,35 @@ func UpdateContent(db *gorm.DB, b *models.Content) error {
 
 //////////Users
 
-func GetUser(db *gorm.DB) (models.ContentUser, error) {
+func GetUser(db *gorm.DB, email string) (models.ContentUser, error) {
 	user := models.ContentUser{}
-	query := db.Select("content_users.*").Group("content_users.id")
-	err := query.Find(&user).Error
+	err := db.Where("content_users.email ?", email).First(user).Error
 	if err != nil {
-		return user, err
-	}
-	return user, nil
-}
 
-//[0m←[33m[1158.674ms] ←[34;1m[rows:0]←[0m SELECT content_users.* FROM "content_users" WHERE content_users.id='' AND "content_users"."deleted_at" IS NULL GROUP BY "content_users"."id" ORDER BY "content_users"."id" LIMIT 1
-
-func GetUserPassword(password string, db *gorm.DB) (models.ContentUser, error) {
-	user := models.ContentUser{}
-	choose := db.Select("content_users.*")
-	query := choose.Group("content_users.hashed_password")
-	err := query.Where("content_users.hashed_password=?", password).First(&user).Error
-	err1 := errors.Is(err, gorm.ErrRecordNotFound)
-	if err != nil && !err1 {
-		return user, err
+		return user, nil
 	}
-	if err1 {
+	var password string
+
+	errf := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if errf != nil && errf == bcrypt.ErrMismatchedHashAndPassword {
+
 		return user, nil
 	}
 	return user, nil
 
 }
-func FindByEmail(db *gorm.DB, email string) (models.ContentUser, error) {
-	var user models.ContentUser
-	res := db.Find(user, &models.ContentUser{Email: email})
-	return user, res.Error
-}
 
-//this would be used in implementing login handlers
-type AuthUser interface {
-	GetUser(db *gorm.DB) (models.ContentUser, error)
-}
-
-//a struct for implementing the interface to be used as a configuration for the user handlers
-type Userctx struct {
-	AuthUser
+func UserID(id uint, db *gorm.DB) (models.ContentUser, error) {
+	i := models.ContentUser{}
+	query := db.Select("content_users.*")
+	query = query.Group("content_users.id")
+	err := query.Where("content_users.id = ?", id).First(&i).Error
+	err1 := errors.Is(err, gorm.ErrRecordNotFound)
+	if err != nil && !err1 {
+		return i, err
+	}
+	if err1 {
+		return i, nil
+	}
+	return i, nil
 }

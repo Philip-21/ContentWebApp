@@ -6,7 +6,6 @@ import (
 
 	"github.com/Philip-21/proj1/config"
 	"github.com/Philip-21/proj1/database"
-	"github.com/Philip-21/proj1/middleware"
 
 	"github.com/Philip-21/proj1/models"
 	"github.com/gin-gonic/gin"
@@ -16,12 +15,9 @@ import (
 //repository for Content Handlers
 // and repository for User handlers  and the configuration for authentication
 type Repository struct {
-	App        *config.AppConfig
-	DB         *gorm.DB
-	config     config.Envconfig
-	tokenMaker middleware.Maker
-	store      *database.AuthUser
-	router     *gin.Engine
+	App    *config.AppConfig
+	DB     *gorm.DB
+	config config.Envconfig
 }
 
 func (r *Repository) CreateContent(c *gin.Context) {
