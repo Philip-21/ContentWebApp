@@ -18,10 +18,12 @@ func Routes(app *handlers.Repository) *gin.Engine {
 	router.GET("/get-contents", api.GetContent)
 	router.GET("/get-content/:id", api.GetContentByID)
 	router.POST("/signup", api.CreateUser)
+	router.POST("login", api.Login)
 
 	user := router.Group("/user")
 	{
 		user.Use(middleware.Auth)
+		user.GET("/info", api.UserID)
 		user.POST("/signup", api.CreateUser)
 		user.POST("/login", api.Login)
 		user.POST("/post-content", api.CreateContent)

@@ -15,9 +15,8 @@ import (
 //repository for Content Handlers
 // and repository for User handlers  and the configuration for authentication
 type Repository struct {
-	App    *config.AppConfig
-	DB     *gorm.DB
-	config config.Envconfig
+	App *config.AppConfig
+	DB  *gorm.DB
 }
 
 func (r *Repository) CreateContent(c *gin.Context) {

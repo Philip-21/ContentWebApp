@@ -16,7 +16,7 @@ type authClaims struct {
 	ID uint `json:"Id"`
 }
 
-func GenerateJwt() (string, error) {
+func GenerateJwt(models.ContentUser) (string, error) {
 	var user models.ContentUser
 	expiresAt := time.Now().Add(24 * time.Hour).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, authClaims{
@@ -46,9 +46,12 @@ func VerifyJwt(tokenString string) (uint, string, error) {
 	if err != nil {
 		return 0, "", err
 	}
+	// Check if jwt.Token.Valid is valid.
 	if !token.Valid {
 		return 0, "", errors.New("invalid token")
 	}
+	//If the verification passes,
+	//we can get the user ID and email from the claims.
 	id := claims.ID
 	email := claims.Subject
 	return id, email, nil

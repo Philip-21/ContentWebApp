@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Philip-21/proj1/database"
+	"github.com/Philip-21/proj1/middleware"
 	"github.com/Philip-21/proj1/models"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -14,13 +15,13 @@ import (
 //Creating a User Account
 func (r *Repository) CreateUser(c *gin.Context) {
 
-	var req models.SigninUserRequest
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	var user models.SigninUserRequest
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return
 	}
 	create := models.ContentUser{
-		Email:    req.Email,
+		Email:    user.Email,
 		Password: string(passwordHash),
 	}
 
@@ -43,18 +44,37 @@ var Repo *Repository
 func (r *Repository) Login(c *gin.Context) {
 	var req models.SigninUserRequest
 
-	user, err := database.GetUser(r.DB, req.Email)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, "Invalid credentials")
-		c.JSON(http.StatusInternalServerError, user)
-
-	}
-	if user.Password != req.Password {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "incorrect password",
-		})
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect parameters"})
 		return
 	}
 
+	user, err := database.GetUser(r.DB, req.Email, req.Password)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "invalid credentials"})
+		return
+	}
+
+	token, err := middleware.GenerateJwt(user)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"token": token})
 	c.JSON(http.StatusOK, "logged in successfully")
+}
+
+func (r *Repository) UserID(c *gin.Context) {
+	id, _, ok := middleware.GetSession(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{})
+		return
+	}
+	user, err := database.UserID(r.DB, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{})
+		return
+	}
+	c.JSON(http.StatusOK, user)
+
 }

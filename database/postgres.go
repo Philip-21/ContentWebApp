@@ -53,25 +53,31 @@ func UpdateContent(db *gorm.DB, b *models.Content) error {
 
 //////////Users
 
-func GetUser(db *gorm.DB, email string) (models.ContentUser, error) {
-	user := models.ContentUser{}
-	err := db.Where("content_users.email ?", email).First(user).Error
-	if err != nil {
-
-		return user, nil
+func GetUser(db *gorm.DB, email string, password string) (models.ContentUser, error) {
+	//var password string
+	user := models.ContentUser{
+		Email:    email,
+		Password: password,
 	}
-	var password string
+	query := db.Select("content_users.*")
+	err := query.Where("email= ?", email).Take(&user).Error
+	if err != nil {
+		errors.Is(err, gorm.ErrRecordNotFound)
+		return user, err
+	}
 
-	errf := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if errf != nil && errf == bcrypt.ErrMismatchedHashAndPassword {
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		return user, errors.New("incorrect password")
+	} else if err != nil {
+		return user, err
 
-		return user, nil
 	}
 	return user, nil
 
 }
 
-func UserID(id uint, db *gorm.DB) (models.ContentUser, error) {
+func UserID(db *gorm.DB, id uint) (models.ContentUser, error) {
 	i := models.ContentUser{}
 	query := db.Select("content_users.*")
 	query = query.Group("content_users.id")
