@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/Philip-21/proj1/models"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -53,12 +52,9 @@ func UpdateContent(db *gorm.DB, b *models.Content) error {
 
 //////////Users
 
-func GetUser(db *gorm.DB, email string, password string) (models.ContentUser, error) {
-	//var password string
-	user := models.ContentUser{
-		Email:    email,
-		Password: password,
-	}
+func GetUser(db *gorm.DB, email string) (models.ContentUser, error) {
+
+	user := models.ContentUser{}
 	query := db.Select("content_users.*")
 	err := query.Where("email= ?", email).Take(&user).Error
 	if err != nil {
@@ -66,13 +62,6 @@ func GetUser(db *gorm.DB, email string, password string) (models.ContentUser, er
 		return user, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if err == bcrypt.ErrMismatchedHashAndPassword {
-		return user, errors.New("incorrect password")
-	} else if err != nil {
-		return user, err
-
-	}
 	return user, nil
 
 }

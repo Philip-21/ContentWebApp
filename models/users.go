@@ -10,7 +10,7 @@ type ContentUser struct {
 	gorm.Model
 	ID        uint      `gorm:"primaryKey"`
 	Email     string    `gorm:"not null;unique" json:"email" `
-	Password  string    `gorm:"size:60;not null" json:"password" `
+	Password  []byte    `gorm:"size:60;not null" json:"password" `
 	CreatedAt time.Time // `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
@@ -19,7 +19,7 @@ type ContentUser struct {
 //a login model displayed for  user to login
 type SigninUserRequest struct {
 	Email    string `json:"email"`
-	Password string `json:"password" binding:"required,min=6"`
+	Password []byte `json:"password" binding:"required,min=6"`
 }
 
 //returns a response when a User logs in

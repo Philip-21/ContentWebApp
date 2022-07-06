@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/Philip-21/proj1/database"
@@ -15,22 +17,23 @@ import (
 //Creating a User Account
 func (r *Repository) CreateUser(c *gin.Context) {
 
-	var user models.SigninUserRequest
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	var req models.SigninUserRequest
+	//var data map[string]string
+
+	hashedpassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 8)
 	if err != nil {
 		return
 	}
-	create := models.ContentUser{
-		Email:    user.Email,
-		Password: string(passwordHash),
+	create := &models.ContentUser{
+		Email:    req.Email,
+		Password: hashedpassword,
 	}
-
 	json := c.BindJSON(&create)
 	if json != nil {
 		c.JSON(http.StatusInternalServerError, json)
 		return
 	}
-	//putting the post in the database(the Content table )
+	//putting the post in the database(the Content_users table )
 	if err := r.DB.Create(&create).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		c.JSON(http.StatusInternalServerError, "User Exists")
@@ -43,15 +46,20 @@ var Repo *Repository
 
 func (r *Repository) Login(c *gin.Context) {
 	var req models.SigninUserRequest
-
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect parameters"})
 		return
 	}
-
-	user, err := database.GetUser(r.DB, req.Email, req.Password)
+	user, err := database.GetUser(r.DB, req.Email)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "invalid credentials"})
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("incorrect email %s", req.Email)})
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		errors.New("incorrect password")
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("incorrect password %s", req.Password)})
 		return
 	}
 
@@ -76,5 +84,4 @@ func (r *Repository) UserID(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, user)
-
 }
