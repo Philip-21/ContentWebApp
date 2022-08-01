@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"net/http"
+
 	"github.com/Philip-21/proj1/database"
 	"github.com/Philip-21/proj1/handlers"
 	"github.com/Philip-21/proj1/middleware"
@@ -10,6 +12,12 @@ import (
 func Routes(app *handlers.Repository) *gin.Engine {
 	router := gin.Default()
 
+	router.LoadHTMLGlob("./templates/*.html")
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "base.layout.html", gin.H{
+			"title": "Main website",
+		})
+	})
 	//api* handlers.Server a variable for Content Repository and User Repository
 	api := &handlers.Repository{
 		DB: database.GetDB(),

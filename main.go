@@ -24,6 +24,8 @@ func main() {
 	log.Println("Connected to Database..")
 	log.Println("migration successful")
 
+	//render.CreateTemplate()
+
 	//running the application
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
 	r := routes.Routes(handlers.Repo)
