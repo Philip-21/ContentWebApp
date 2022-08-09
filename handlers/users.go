@@ -33,6 +33,7 @@ func (r *Repository) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, json)
 		return
 	}
+
 	//putting the post in the database(the Content_users table )
 	if err := r.DB.Create(&create).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -43,6 +44,12 @@ func (r *Repository) CreateUser(c *gin.Context) {
 }
 
 var Repo *Repository
+
+func (r *Repository) ShowLogin(c *gin.Context) {
+	c.HTML(http.StatusOK, "login.html", gin.H{
+		"Title": "login Page",
+	})
+}
 
 func (r *Repository) Login(c *gin.Context) {
 	var req models.SigninUserRequest
