@@ -18,6 +18,7 @@ func Routes(app *handlers.Repository) *gin.Engine {
 		DB: database.GetDB(),
 	}
 
+	router.GET("/", api.Home)
 	router.GET("/login", api.ShowLogin)
 	router.GET("/get-contents", api.GetContent)
 	router.GET("/get-content/:id", api.GetContentByID)

@@ -19,6 +19,11 @@ type Repository struct {
 	DB  *gorm.DB
 }
 
+func (r *Repository) Home(c *gin.Context) {
+	c.HTML(http.StatusOK, "home.html", gin.H{
+		"Title": "home page",
+	})
+}
 func (r *Repository) CreateContent(c *gin.Context) {
 
 	post := models.Content{
