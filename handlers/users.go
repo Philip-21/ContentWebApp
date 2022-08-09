@@ -45,9 +45,13 @@ func (r *Repository) CreateUser(c *gin.Context) {
 
 var Repo *Repository
 
+func (r *Repository) ShowSignup(c *gin.Context) {
+	c.HTML(http.StatusOK, "signup.html", &models.TemplateData{})
+}
+
 func (r *Repository) ShowLogin(c *gin.Context) {
-	c.HTML(http.StatusOK, "login.html", gin.H{
-		"Title": "login Page",
+	c.HTML(http.StatusOK, "login.html", &models.TemplateData{
+		IsAuthenticated: 1,
 	})
 }
 

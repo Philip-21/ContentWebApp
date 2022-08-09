@@ -20,9 +20,7 @@ type Repository struct {
 }
 
 func (r *Repository) Home(c *gin.Context) {
-	c.HTML(http.StatusOK, "home.html", gin.H{
-		"Title": "home page",
-	})
+	c.HTML(http.StatusOK, "home.html", models.TemplateData{})
 }
 func (r *Repository) CreateContent(c *gin.Context) {
 

@@ -19,9 +19,11 @@ func Routes(app *handlers.Repository) *gin.Engine {
 	}
 
 	router.GET("/", api.Home)
+	router.GET("signup", api.ShowSignup)
 	router.GET("/login", api.ShowLogin)
 	router.GET("/get-contents", api.GetContent)
 	router.GET("/get-content/:id", api.GetContentByID)
+
 	router.POST("/signup", api.CreateUser)
 	router.POST("/login", api.Login)
 
