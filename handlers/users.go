@@ -9,6 +9,7 @@ import (
 	"github.com/Philip-21/proj1/middleware"
 	"github.com/Philip-21/proj1/models"
 	"github.com/gin-gonic/gin"
+	csrf "github.com/utrack/gin-csrf"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -25,14 +26,15 @@ func (r *Repository) CreateUser(c *gin.Context) {
 		return
 	}
 	create := &models.ContentUser{
-		Email:    req.Email,
-		Password: hashedpassword,
+		Email:    c.PostForm(req.Email),
+		Password: []byte(c.PostForm(string(hashedpassword))),
 	}
 	json := c.BindJSON(&create)
 	if json != nil {
 		c.JSON(http.StatusInternalServerError, json)
 		return
 	}
+	//[]byte(c.PostForm(string(hashedpassword)))
 
 	//putting the post in the database(the Content_users table )
 	if err := r.DB.Create(&create).Error; err != nil {
@@ -80,6 +82,7 @@ func (r *Repository) Login(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.String(200, csrf.GetToken(c))
 	c.JSON(http.StatusOK, "logged in successfully")
 }
 

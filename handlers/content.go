@@ -53,6 +53,7 @@ func (r *Repository) GetContent(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, con)
+	c.HTML(http.StatusOK, "get-post.html", &models.TemplateData{})
 }
 
 func (r *Repository) GetContentByID(c *gin.Context) {

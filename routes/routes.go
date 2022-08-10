@@ -12,6 +12,7 @@ func Routes(app *handlers.Repository) *gin.Engine {
 
 	//loads the html file in the directory
 	router.LoadHTMLGlob("templates/*.html")
+	//router.StaticFile()
 
 	//api* handlers.Server a variable for Content Repository and User Repository
 	api := &handlers.Repository{
@@ -26,6 +27,7 @@ func Routes(app *handlers.Repository) *gin.Engine {
 
 	router.POST("/signup", api.CreateUser)
 	router.POST("/login", api.Login)
+	router.POST("/post-content", api.CreateContent)
 
 	user := router.Group("/user")
 	{
