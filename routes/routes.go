@@ -12,7 +12,9 @@ func Routes(app *handlers.Repository) *gin.Engine {
 
 	//loads the html file in the directory
 	router.LoadHTMLGlob("templates/*.html")
-	//router.StaticFile()
+
+	//reads the images  kept in the static folder
+	router.Static("static", "./static")
 
 	//api* handlers.Server a variable for Content Repository and User Repository
 	api := &handlers.Repository{

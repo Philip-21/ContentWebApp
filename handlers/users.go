@@ -43,6 +43,7 @@ func (r *Repository) CreateUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, create)
+	c.String(200, csrf.GetToken(c))
 }
 
 var Repo *Repository
