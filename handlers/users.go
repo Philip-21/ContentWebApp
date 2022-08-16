@@ -16,20 +16,19 @@ import (
 //---------------initialize a new repository for users----------------
 
 //Creating a User Account
-func (r *Repository) CreateUser(c *gin.Context) {
+func (r *Repository) Signup(c *gin.Context) {
 
-	var req models.SigninUserRequest
-	//var data map[string]string
-
-	hashedpassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 8)
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+	hashedpassword, err := bcrypt.GenerateFromPassword([]byte(password), 8)
 	if err != nil {
 		return
 	}
-	create := &models.ContentUser{
-		Email:    c.PostForm(req.Email),
-		Password: []byte(c.PostForm(string(hashedpassword))),
+	create := models.ContentUser{
+		Email:    email,
+		Password: hashedpassword,
 	}
-	json := c.BindJSON(&create)
+	json := c.BindJSON(create)
 	if json != nil {
 		c.JSON(http.StatusInternalServerError, json)
 		return
@@ -42,6 +41,7 @@ func (r *Repository) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, "User Exists")
 		return
 	}
+
 	c.JSON(http.StatusOK, create)
 	c.String(200, csrf.GetToken(c))
 }

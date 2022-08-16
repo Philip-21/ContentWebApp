@@ -27,7 +27,7 @@ func Routes(app *handlers.Repository) *gin.Engine {
 	router.GET("/get-contents", api.GetContent)
 	router.GET("/get-content/:id", api.GetContentByID)
 
-	router.POST("/signup", api.CreateUser)
+	router.POST("/signup", api.Signup)
 	router.POST("/login", api.Login)
 	router.POST("/post-content", api.CreateContent)
 
@@ -35,7 +35,7 @@ func Routes(app *handlers.Repository) *gin.Engine {
 	{
 		user.Use(middleware.Auth)
 		user.GET("/info", api.UserID)
-		user.POST("/signup", api.CreateUser)
+		user.POST("/signup", api.Signup)
 		user.POST("/login", api.Login)
 		user.POST("/post-content", api.CreateContent)
 		user.PUT("/update-content/:id", api.UpdateContent)
