@@ -35,7 +35,7 @@ func (f *Form) Required(fields ...string) { //n.b (... called ellipses) denotes 
 		// Get returns the empty string
 		value := f.Get(field)
 		if strings.TrimSpace(value) == "" {
-			f.Errors.Add(field, "This field Cannot be Blanl")
+			f.Errors.Add(field, "This field Cannot be Blank")
 		}
 	}
 }

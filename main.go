@@ -1,11 +1,16 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"log"
+	"net/http"
+	"time"
 
 	"github.com/Philip-21/proj1/config"
 	"github.com/Philip-21/proj1/handlers"
+	"github.com/Philip-21/proj1/models"
+	"github.com/alexedwards/scs/v2"
 
 	"github.com/Philip-21/proj1/database"
 	"github.com/Philip-21/proj1/routes"
@@ -13,7 +18,22 @@ import (
 
 const portNumber = ":8080"
 
+var session *scs.SessionManager
+var app config.AppConfig
+
 func main() {
+
+	gob.Register(models.Content{})
+	gob.Register(models.ContentUser{})
+	gob.Register(map[string]int{})
+
+	//app.InProduction = false
+	app.Session = session
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	//session.Cookie.Secure = app.InProduction
 
 	//DATABASE
 	config.LoadConfig() //load viper configurations
