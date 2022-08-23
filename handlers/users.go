@@ -22,20 +22,17 @@ var Repo *Repository
 func (r *Repository) ShowSignup(c *gin.Context) {
 	c.HTML(http.StatusOK, "signup.html", &models.TemplateData{
 		Form: forms.New(nil), //creating an empty form
-
 	})
 }
 
 func (r *Repository) ShowLogin(c *gin.Context) {
 	c.HTML(http.StatusOK, "login.html", &models.TemplateData{
-		IsAuthenticated: 1,
+		Form: forms.New(nil),
 	})
 }
 
 //Creating a User Account
 func (r *Repository) Signup(c *gin.Context) {
-	//preventing session fixation attack by renewing the token
-	//_ = r.App.Session.RenewToken(c.Request.Context())
 	err := c.Request.ParseForm()
 	if err != nil {
 		log.Println(err)
@@ -58,25 +55,31 @@ func (r *Repository) Signup(c *gin.Context) {
 		Email:    email,
 		Password: hashedpassword,
 	}
-	// err = c.ShouldBindJSON(&create)
-	// if err != nil {
-	// 	//c.JSON(http.StatusInternalServerError, create)
-	// 	return
-	// }
+	c.ShouldBindJSON(&create)
 	//putting the post in the database(the Content_users table )
 	if err := r.DB.Create(&create).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		c.JSON(http.StatusInternalServerError, "User Exists")
 		return
 	}
-	r.App.Session.Put(c.Request.Context(), "email", create)
-	r.App.Session.Put(c.Request.Context(), "flash", "signed in successfuly")
-	c.Redirect(http.StatusSeeOther, "/")
+
+	// r.App.Session.Put(c.Request.Context(), "user_id", user)
+	//r.App.Session.Put(c.Request.Context(), "flash", "signed in successfuly")
+	r.App.Session.Get(c.Request.Context(), "Signed in ")
+
 	c.JSON(http.StatusOK, create)
+	c.Redirect(http.StatusSeeOther, "/")
 
 }
 
 func (r *Repository) Login(c *gin.Context) {
+	err := c.Request.ParseForm()
+	if err != nil {
+		return
+	}
+	// email :=c.Request.Form.Get("email")
+	// password := c.Request.Form.Get("password")
+	// form
 	var req models.SigninUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect parameters"})

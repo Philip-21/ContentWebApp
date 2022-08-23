@@ -23,7 +23,7 @@
                 </div>
                 
                 <form method="post" action="/signup" novalidate> <!--no validate wont validate until the parameters based in forms.go (email) are met  -->
-                  <!-- <input type="hidden" name="csrf_token" value="{{.CSRFToken}}"> -->
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}"> 
                   <div class="form-group mt-3">
                       <label for="email">Email:</label>
                       {{with .Form.Errors.Get "email"}}   <!--with is a golang template directive ,this  gets access to the errors object from the forms.go -->
@@ -57,13 +57,20 @@
           {{end}}
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous">
 
+       //handling the displaying of messages on each page based on the template data
+        //with gets the objects 
         {{with .Error}}
-        notify("{{.}}","error")
+        notify("{{.}}", "error")
         {{end}}
 
         {{with .Flash}}
         notify("{{.}}", "success")
         {{end}}
+
+        {{with .Warning}}
+        notify("{{.}}", "warning")
+        {{end}}
+        
         
         </script>
     </body>

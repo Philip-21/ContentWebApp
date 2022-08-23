@@ -12,6 +12,7 @@ type AppConfig struct {
 	InfoLog  *log.Logger //a standard library that writes information to log files
 	ErrorLog *log.Logger //this allows us to write logs and handle errors efficiently
 	Session  *scs.SessionManager
+	InProduction bool
 }
 
 type Envconfig struct {

@@ -2,17 +2,16 @@ package models
 
 import (
 	"github.com/Philip-21/proj1/forms"
-	"github.com/Philip-21/proj1/render"
 )
 
 type TemplateData struct {
-	IsAuthenticated int
-	CSRFToken       string //a security token that handles forms
+	CSRFToken       string
 	Data            map[string]interface{}
 	Form            *forms.Form
-	Flash           *render.FlashData
-	Warning         *render.WarningData
-	Error           *render.ErrorData
+	Warning         string
+	Error           string
+	Flash           string
+	IsAuthenticated int
 }
 
 // func AddData(td *TemplateData, c *gin.Context) *TemplateData {

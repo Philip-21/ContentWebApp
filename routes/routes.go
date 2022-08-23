@@ -1,9 +1,14 @@
 package routes
 
 import (
+	"html/template"
+	"log"
+	"os"
+
 	"github.com/Philip-21/proj1/database"
 	"github.com/Philip-21/proj1/handlers"
 	"github.com/Philip-21/proj1/middleware"
+	"github.com/Philip-21/proj1/render"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,8 +16,14 @@ func Routes(app *handlers.Repository) *gin.Engine {
 	router := gin.Default()
 
 	//loads the html file in the directory
-	router.LoadHTMLGlob("templates/*.html")
-
+	//router.LoadHTMLGlob("templates/*.html")
+	html := template.Must(template.ParseGlob("templates/*.html"))
+	err := html.Execute(os.Stdout, render.AddData)
+	if err != nil {
+		log.Println(err)
+		log.Println("Cannot execute template")
+	}
+	router.SetHTMLTemplate(html)
 	//reads the images  kept in the static folder
 	router.Static("static", "./static")
 
