@@ -1,58 +1,76 @@
 package middleware
 
 import (
-	"errors"
 	"fmt"
+	"log"
 	"time"
 
-	"github.com/Philip-21/Content/models"
+	"github.com/Philip-21/Content/config"
 	"github.com/golang-jwt/jwt"
 )
 
-var jwtKey = []byte("FDr1VjVQiSiybYJrQZNt8Vfd7bFEsKP6vNX1brOSiWl0mAIVCxJiR4/T3zpAlBKc2/9Lw2ac4IwMElGZkssfj3dqwa7CQC7IIB+nVxiM1c9yfowAZw4WQJ86RCUTXaXvRX8JoNYlgXcRrK3BK0E/fKCOY1+izInW3abf0jEeN40HJLkXG6MZnYdhzLnPgLL/TnIFTTAbbItxqWBtkz6FkZTG+dkDSXN7xNUxlg==")
-
-type authClaims struct {
+type SignedDetails struct {
+	Email     string
+	Uid       string
+	User_type string
 	jwt.StandardClaims
-	ID uint `json:"Id"`
 }
 
-func GenerateJwt(models.ContentUser) (string, error) {
-	var user models.ContentUser
-	expiresAt := time.Now().Add(24 * time.Hour).Unix()
-	token := jwt.NewWithClaims(jwt.SigningMethodHS512, authClaims{
+var connect *config.Envconfig
+
+var SECRET_KEY = fmt.Sprintf("SECRET_KEY=%s", connect.SecretKey)
+
+func GetAllToken(email string, uid string, user_type string) (signedToken string, signedRefreshToken string, err error) {
+	//generate new token
+	claims := &SignedDetails{
+		Email:     email,
+		Uid:       uid,
+		User_type: user_type,
 		StandardClaims: jwt.StandardClaims{
-			Subject:   user.Email,
-			ExpiresAt: expiresAt,
+			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},
-		ID: user.ID,
-	})
-	tokenString, err := token.SignedString(jwtKey)
-	if err != nil {
-		return "", err
 	}
-	return tokenString, nil
+
+	//gets a new token if initial token has expired
+	refreshClaims := &SignedDetails{
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
+		},
+	}
+	//call the jwt
+	token, err := jwt.NewWithClaims(jwt.SigningMethodES256, claims).SignedString([]byte(SECRET_KEY))
+	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodES256, refreshClaims).SignedString([]byte(SECRET_KEY))
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+	return token, refreshToken, err
 }
 
-// ValidateToken() verifys the JWT token.
-func VerifyJwt(tokenString string) (uint, string, error) {
-	var claims authClaims
-	//to decrypt the JWT token
-	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return jwtKey, nil
-	})
+// confirms the token to be used in the middlewre
+func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
+	token, err := jwt.ParseWithClaims(
+		signedToken,
+		&SignedDetails{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(SECRET_KEY), nil
+		},
+	)
 	if err != nil {
-		return 0, "", err
+		msg = err.Error()
+		return
 	}
-	// Check if jwt.Token.Valid is valid.
-	if !token.Valid {
-		return 0, "", errors.New("invalid token")
+	claims, ok := token.Claims.(*SignedDetails)
+	if !ok {
+		msg = fmt.Sprintf("invalid token ")
+		msg = err.Error()
+		return
 	}
-	//If the verification passes,
-	//we can get the user ID and email from the claims.
-	id := claims.ID
-	email := claims.Subject
-	return id, email, nil
+	//additinal checks
+	if claims.ExpiresAt < time.Now().Local().Unix() {
+		msg = fmt.Sprintf("token is expired")
+		msg = err.Error()
+		return
+	}
+	return claims, msg
 }
