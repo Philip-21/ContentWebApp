@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/Philip-21/proj1/database"
-	"github.com/Philip-21/proj1/handlers"
-	"github.com/Philip-21/proj1/middleware"
-	"github.com/Philip-21/proj1/render"
+	"github.com/Philip-21/Content/database"
+	"github.com/Philip-21/Content/handlers"
+	"github.com/Philip-21/Content/middleware"
+	"github.com/Philip-21/Content/render"
 	"github.com/gin-gonic/gin"
 )
 

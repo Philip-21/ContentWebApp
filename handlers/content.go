@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Philip-21/proj1/config"
-	"github.com/Philip-21/proj1/database"
+	"github.com/Philip-21/Content/config"
+	"github.com/Philip-21/Content/database"
 
-	"github.com/Philip-21/proj1/models"
+	"github.com/Philip-21/Content/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-//repository for Content Handlers
+// repository for Content Handlers
 // and repository for User handlers  and the configuration for authentication
 type Repository struct {
 	App *config.AppConfig

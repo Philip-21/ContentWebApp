@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/Philip-21/proj1/forms"
+	"github.com/Philip-21/Content/forms"
 )
 
 type TemplateData struct {

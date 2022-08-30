@@ -3,7 +3,7 @@ package database
 import (
 	"testing"
 
-	"github.com/Philip-21/proj1/models"
+	"github.com/Philip-21/Content/models"
 	"gorm.io/gorm"
 )
 

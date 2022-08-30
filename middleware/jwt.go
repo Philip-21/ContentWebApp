@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Philip-21/proj1/models"
+	"github.com/Philip-21/Content/models"
 	"github.com/golang-jwt/jwt"
 )
 

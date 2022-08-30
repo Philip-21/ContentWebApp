@@ -6,10 +6,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Philip-21/proj1/database"
-	"github.com/Philip-21/proj1/forms"
-	"github.com/Philip-21/proj1/middleware"
-	"github.com/Philip-21/proj1/models"
+	"github.com/Philip-21/Content/database"
+	"github.com/Philip-21/Content/forms"
+	"github.com/Philip-21/Content/middleware"
+	"github.com/Philip-21/Content/models"
 	"github.com/gin-gonic/gin"
 	csrf "github.com/utrack/gin-csrf"
 	"golang.org/x/crypto/bcrypt"
@@ -31,7 +31,7 @@ func (r *Repository) ShowLogin(c *gin.Context) {
 	})
 }
 
-//Creating a User Account
+// Creating a User Account
 func (r *Repository) Signup(c *gin.Context) {
 	err := c.Request.ParseForm()
 	if err != nil {

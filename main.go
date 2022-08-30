@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Philip-21/proj1/config"
-	"github.com/Philip-21/proj1/handlers"
-	"github.com/Philip-21/proj1/models"
+	"github.com/Philip-21/Content/config"
+	"github.com/Philip-21/Content/handlers"
+	"github.com/Philip-21/Content/models"
 	"github.com/alexedwards/scs/v2"
 
-	"github.com/Philip-21/proj1/database"
-	"github.com/Philip-21/proj1/routes"
+	"github.com/Philip-21/Content/database"
+	"github.com/Philip-21/Content/routes"
 )
 
 const portNumber = ":8080"

@@ -1,6 +1,6 @@
-module github.com/Philip-21/proj1
+module github.com/Philip-21/Content
 
-go 1.18
+go 1.19
 
 require (
 	github.com/alexedwards/scs/v2 v2.5.0
@@ -9,9 +9,9 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/spf13/viper v1.12.0
 	github.com/utrack/gin-csrf v0.0.0-20190424104817-40fb8d2c8fca
-	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
-	gorm.io/driver/postgres v1.3.7
-	gorm.io/gorm v1.23.6
+	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
+	gorm.io/driver/postgres v1.3.9
+	gorm.io/gorm v1.23.8
 )
 
 require (
@@ -23,7 +23,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
-	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/sessions v1.1.3 // indirect

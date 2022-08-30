@@ -1,8 +1,8 @@
 package render
 
 import (
-	"github.com/Philip-21/proj1/config"
-	"github.com/Philip-21/proj1/models"
+	"github.com/Philip-21/Content/config"
+	"github.com/Philip-21/Content/models"
 	"github.com/gin-gonic/gin"
 	csrf "github.com/utrack/gin-csrf"
 )
