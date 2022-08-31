@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/Philip-21/Content/config"
@@ -16,9 +17,10 @@ type SignedDetails struct {
 
 var connect *config.Envconfig
 
-var SECRET_KEY = fmt.Sprintf("SECRET_KEY=%s", connect.SecretKey)
+// var SECRET_KEY = fmt.Sprintf("SECRET_KEY=%s", connect.SecretKey)
+var SECRET_KEY = os.Getenv("SECRET_KEY")
 
-func GetAllToken(email string) (signedToken string, signedRefreshToken string, err error) {
+func GenerateToken(email string) (signedToken string, signedRefreshToken string, err error) {
 	//generate new token
 	claims := &SignedDetails{
 		Email: email,

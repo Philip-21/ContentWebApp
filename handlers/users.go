@@ -8,6 +8,7 @@ import (
 
 	"github.com/Philip-21/Content/database"
 	"github.com/Philip-21/Content/forms"
+	"github.com/Philip-21/Content/middleware"
 	"github.com/Philip-21/Content/models"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -73,15 +74,23 @@ func (r *Repository) Signup(c *gin.Context) {
 func (r *Repository) Login(c *gin.Context) {
 	err := c.Request.ParseForm()
 	if err != nil {
+		log.Println((err))
 		return
 	}
-	// email :=c.Request.Form.Get("email")
-	// password := c.Request.Form.Get("password")
-	// form
-	var req models.SigninUserRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect parameters"})
+	email := c.Request.Form.Get("email")
+	password := c.Request.Form.Get("password")
+	form := forms.New(c.Request.Form)
+	form.Required("email", "password")
+	form.ValidEmail("email")
+	if !form.Valid() {
+		c.HTML(http.StatusMethodNotAllowed, "login.html", &models.TemplateData{
+			Form: form,
+		})
 		return
+	}
+	req := &models.SignInResponse{
+		Email:    email,
+		Password: password,
 	}
 	user, err := database.GetUser(r.DB, req.Email)
 	if err != nil {
@@ -96,13 +105,12 @@ func (r *Repository) Login(c *gin.Context) {
 		return
 	}
 
-	// token, err := middleware.GenerateJwt(user)
-	// if err != nil {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// c.JSON(http.StatusOK, gin.H{"token": token})
-	// c.String(200, csrf.GetToken(c))
+	token, _, err := middleware.GenerateToken(user.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, token)
 	c.JSON(http.StatusOK, "logged in successfully")
 }
 

@@ -27,7 +27,7 @@ func Routes(app *handlers.Repository) *gin.Engine {
 	//reads the images  kept in the static folder
 	router.Static("static", "./static")
 
-	//api* handlers.Server a variable for Content Repository and User Repository
+	//api* handlers.Repository a variable for Content Repository and User Repository
 	api := &handlers.Repository{
 		DB: database.GetDB(),
 	}
@@ -40,6 +40,7 @@ func Routes(app *handlers.Repository) *gin.Engine {
 
 	router.POST("/signup", api.Signup)
 	router.POST("/login", api.Login)
+
 	router.POST("/post-content", api.CreateContent)
 
 	user := router.Group("/user")

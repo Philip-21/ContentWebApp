@@ -15,3 +15,8 @@ type ContentUser struct {
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
+
+type SignInResponse struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
