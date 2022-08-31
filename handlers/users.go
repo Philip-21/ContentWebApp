@@ -8,10 +8,8 @@ import (
 
 	"github.com/Philip-21/Content/database"
 	"github.com/Philip-21/Content/forms"
-	"github.com/Philip-21/Content/middleware"
 	"github.com/Philip-21/Content/models"
 	"github.com/gin-gonic/gin"
-	csrf "github.com/utrack/gin-csrf"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -63,7 +61,7 @@ func (r *Repository) Signup(c *gin.Context) {
 		return
 	}
 
-	// r.App.Session.Put(c.Request.Context(), "user_id", user)
+	// r.App.Session.Put(c.Request.Context(), "email", user)
 	//r.App.Session.Put(c.Request.Context(), "flash", "signed in successfuly")
 	r.App.Session.Get(c.Request.Context(), "Signed in ")
 
@@ -98,26 +96,26 @@ func (r *Repository) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := middleware.GenerateJwt(user)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"token": token})
-	c.String(200, csrf.GetToken(c))
+	// token, err := middleware.GenerateJwt(user)
+	// if err != nil {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+	// 	return
+	// }
+	// c.JSON(http.StatusOK, gin.H{"token": token})
+	// c.String(200, csrf.GetToken(c))
 	c.JSON(http.StatusOK, "logged in successfully")
 }
 
-func (r *Repository) UserID(c *gin.Context) {
-	id, _, ok := middleware.GetSession(c)
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{})
-		return
-	}
-	user, err := database.UserID(r.DB, id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{})
-		return
-	}
-	c.JSON(http.StatusOK, user)
-}
+// func (r *Repository) UserID(c *gin.Context) {
+// 	id, _, ok := middleware.GetSession(c)
+// 	if !ok {
+// 		c.JSON(http.StatusUnauthorized, gin.H{})
+// 		return
+// 	}
+// 	user, err := database.UserID(r.DB, id)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{})
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, user)
+// }

@@ -44,10 +44,8 @@ func Routes(app *handlers.Repository) *gin.Engine {
 
 	user := router.Group("/user")
 	{
-		user.Use(middleware.Auth)
-		user.GET("/info", api.UserID)
-		user.POST("/signup", api.Signup)
-		user.POST("/login", api.Login)
+		user.Use(middleware.Auth())
+		//user.GET("/info", api.UserID)
 		user.POST("/post-content", api.CreateContent)
 		user.PUT("/update-content/:id", api.UpdateContent)
 		user.DELETE("/delete-content/:id", api.DeleteContent)

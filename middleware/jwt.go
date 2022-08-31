@@ -10,9 +10,7 @@ import (
 )
 
 type SignedDetails struct {
-	Email     string
-	Uid       string
-	User_type string
+	Email string
 	jwt.StandardClaims
 }
 
@@ -20,12 +18,10 @@ var connect *config.Envconfig
 
 var SECRET_KEY = fmt.Sprintf("SECRET_KEY=%s", connect.SecretKey)
 
-func GetAllToken(email string, uid string, user_type string) (signedToken string, signedRefreshToken string, err error) {
+func GetAllToken(email string) (signedToken string, signedRefreshToken string, err error) {
 	//generate new token
 	claims := &SignedDetails{
-		Email:     email,
-		Uid:       uid,
-		User_type: user_type,
+		Email: email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},
