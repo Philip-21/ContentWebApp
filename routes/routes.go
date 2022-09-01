@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/Philip-21/Content/config"
 	"github.com/Philip-21/Content/database"
 	"github.com/Philip-21/Content/handlers"
 	"github.com/Philip-21/Content/middleware"
@@ -12,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Routes(app *handlers.Repository) *gin.Engine {
+func Routes(app *config.AppConfig) *gin.Engine {
 	router := gin.Default()
 
 	//loads the html file in the directory

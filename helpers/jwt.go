@@ -25,7 +25,6 @@ func GenerateToken(email string) (signedToken string, signedRefreshToken string,
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},
 	}
-
 	//gets a new token if initial token has expired
 	refreshClaims := &SignedDetails{
 		StandardClaims: jwt.StandardClaims{

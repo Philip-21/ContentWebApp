@@ -62,16 +62,13 @@ func (r *Repository) Signup(c *gin.Context) {
 		return
 	}
 
-	// r.App.Session.Put(c.Request.Context(), "email", user)
-	//r.App.Session.Put(c.Request.Context(), "flash", "signed in successfuly")
-	r.App.Session.Get(c.Request.Context(), "Signed in ")
-
 	c.JSON(http.StatusOK, create)
 	c.Redirect(http.StatusSeeOther, "/")
 
 }
 
 func (r *Repository) Login(c *gin.Context) {
+
 	err := c.Request.ParseForm()
 	if err != nil {
 		log.Println((err))
@@ -110,6 +107,7 @@ func (r *Repository) Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, token)
 	log.Println("token generated")
 	c.JSON(http.StatusOK, "logged in successfully")

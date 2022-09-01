@@ -30,15 +30,6 @@ func Auth() gin.HandlerFunc {
 		c.Set("email", claims.Email)
 		c.Next()
 
-		if !helpers.IsAuthenticated(c) {
-			session.Put(c.Request.Context(), "error", "log in first!")
-			c.JSON(http.StatusBadRequest, gin.H{"error": "log in first"})
-			http.Redirect(c.Writer, c.Request, "/login", http.StatusSeeOther)
-			return
-
-		}
-		c.Next()
-
 	}
 
 }
