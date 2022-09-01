@@ -1,4 +1,4 @@
-package middleware
+package helpers
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/Philip-21/Content/config"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -14,8 +13,6 @@ type SignedDetails struct {
 	Email string
 	jwt.StandardClaims
 }
-
-var connect *config.Envconfig
 
 // var SECRET_KEY = fmt.Sprintf("SECRET_KEY=%s", connect.SecretKey)
 var SECRET_KEY = os.Getenv("SECRET_KEY")
@@ -36,8 +33,8 @@ func GenerateToken(email string) (signedToken string, signedRefreshToken string,
 		},
 	}
 	//call the jwt
-	token, err := jwt.NewWithClaims(jwt.SigningMethodES256, claims).SignedString([]byte(SECRET_KEY))
-	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodES256, refreshClaims).SignedString([]byte(SECRET_KEY))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SECRET_KEY))
+	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(SECRET_KEY))
 	if err != nil {
 		log.Panic(err)
 		return

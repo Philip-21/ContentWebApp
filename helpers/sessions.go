@@ -1,4 +1,4 @@
-package middleware
+package helpers
 
 import (
 	"net/http"

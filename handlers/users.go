@@ -8,7 +8,7 @@ import (
 
 	"github.com/Philip-21/Content/database"
 	"github.com/Philip-21/Content/forms"
-	"github.com/Philip-21/Content/middleware"
+	"github.com/Philip-21/Content/helpers"
 	"github.com/Philip-21/Content/models"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -105,13 +105,16 @@ func (r *Repository) Login(c *gin.Context) {
 		return
 	}
 
-	token, _, err := middleware.GenerateToken(user.Email)
+	token, _, err := helpers.GenerateToken(user.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, token)
+	log.Println("token generated")
 	c.JSON(http.StatusOK, "logged in successfully")
+	log.Println("logged in Successfully")
+
 }
 
 // func (r *Repository) UserID(c *gin.Context) {

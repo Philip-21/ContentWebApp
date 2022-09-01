@@ -5,8 +5,11 @@ import (
 	"net/http"
 
 	"github.com/Philip-21/Content/helpers"
+	"github.com/alexedwards/scs/v2"
 	"github.com/gin-gonic/gin"
 )
+
+var session *scs.SessionManager
 
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -17,7 +20,7 @@ func Auth() gin.HandlerFunc {
 			return
 		}
 		//validate token
-		claims, err := ValidateToken(clientToken)
+		claims, err := helpers.ValidateToken(clientToken)
 		if err != "" {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 			c.Abort()

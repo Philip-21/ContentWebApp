@@ -4,7 +4,6 @@ import (
 	"github.com/Philip-21/Content/config"
 	"github.com/Philip-21/Content/models"
 	"github.com/gin-gonic/gin"
-	"github.com/justinas/nosurf"
 )
 
 var app *config.AppConfig
@@ -13,7 +12,7 @@ func AddData(td *models.TemplateData, c *gin.Context) *models.TemplateData {
 	td.Flash = app.Session.PopString(c.Request.Context(), "flash")
 	td.Error = app.Session.PopString(c.Request.Context(), "error")
 	td.Warning = app.Session.PopString(c.Request.Context(), "warning")
-	td.CSRFToken = nosurf.Token(c.Request)
+	//td.CSRFToken = nosurf.Token(c.Request)
 	if app.Session.Exists(c.Request.Context(), "email") {
 		td.IsAuthenticated = 1
 	}
