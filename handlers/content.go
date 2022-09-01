@@ -20,6 +20,8 @@ type Repository struct {
 }
 
 func (r *Repository) Home(c *gin.Context) {
+	//getting the remote ip
+
 	c.HTML(http.StatusOK, "home.html", models.TemplateData{})
 }
 func (r *Repository) CreateContent(c *gin.Context) {

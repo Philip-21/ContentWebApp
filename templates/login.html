@@ -24,7 +24,7 @@
                      </div>
                      
                      <form method="post" action="/login" novalidate> <!--no validate wont validate until the parameters based in forms.go (email) are met  -->
-                            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}"> 
+                            <!-- <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">  -->
                             <div class="form-group mt-3">
                             <label for="email">Email:</label>
                             {{with .Form.Errors.Get "email"}}   <!--with is a golang template directive ,this  gets access to the errors object from the forms.go -->

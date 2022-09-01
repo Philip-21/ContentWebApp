@@ -8,9 +8,8 @@ import (
 
 type AppConfig struct {
 	//TemplateCache map[string]*template//
-	InfoLog  *log.Logger //a standard library that writes information to log files
-	ErrorLog *log.Logger //this allows us to write logs and handle errors efficiently
-
+	InfoLog      *log.Logger //a standard library that writes information to log files
+	ErrorLog     *log.Logger //this allows us to write logs and handle errors efficiently
 	InProduction bool
 }
 

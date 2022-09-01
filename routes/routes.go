@@ -5,16 +5,20 @@ import (
 	"log"
 	"os"
 
-	"github.com/Philip-21/Content/config"
 	"github.com/Philip-21/Content/database"
 	"github.com/Philip-21/Content/handlers"
 	"github.com/Philip-21/Content/middleware"
 	"github.com/Philip-21/Content/render"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
-func Routes(app *config.AppConfig) *gin.Engine {
+func Routes(app *handlers.Repository) *gin.Engine {
 	router := gin.Default()
+
+	store := cookie.NewStore([]byte(os.Getenv("SESSION_KEY")))
+	router.Use(sessions.Sessions("mysession", store))
 
 	//loads the html file in the directory
 	//router.LoadHTMLGlob("templates/*.html")

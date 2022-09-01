@@ -12,6 +12,7 @@ type TemplateData struct {
 	Error           string
 	Flash           string
 	IsAuthenticated int
+	StringMap       map[string]string
 }
 
 // func AddData(td *TemplateData, c *gin.Context) *TemplateData {

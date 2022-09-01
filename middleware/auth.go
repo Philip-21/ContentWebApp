@@ -5,11 +5,8 @@ import (
 	"net/http"
 
 	"github.com/Philip-21/Content/helpers"
-	"github.com/alexedwards/scs/v2"
 	"github.com/gin-gonic/gin"
 )
-
-var session *scs.SessionManager
 
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {

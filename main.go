@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/Philip-21/Content/config"
+	"github.com/Philip-21/Content/handlers"
 	"github.com/Philip-21/Content/models"
-	"github.com/alexedwards/scs/v2"
 
 	"github.com/Philip-21/Content/database"
 	"github.com/Philip-21/Content/routes"
@@ -15,12 +15,10 @@ import (
 
 const portNumber = ":8080"
 
-var session *scs.SessionManager
 var app config.AppConfig
 
 func main() {
 
-	//Seesions
 	gob.Register(models.Content{})
 	gob.Register(models.ContentUser{})
 	gob.Register(map[string]int{})
@@ -36,7 +34,7 @@ func main() {
 
 	//running the application
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
-	r := routes.Routes(&app)
+	r := routes.Routes(handlers.Repo)
 	err := r.Run(portNumber)
 	if err != nil {
 		log.Fatal(err)

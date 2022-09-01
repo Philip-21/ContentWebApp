@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/Philip-21/Content/database"
 	"github.com/Philip-21/Content/forms"
 	"github.com/Philip-21/Content/helpers"
 	"github.com/Philip-21/Content/models"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -18,7 +20,13 @@ import (
 
 var Repo *Repository
 
+// NewHandlers sets the repository for the handlers
+func NewHandlers(r *Repository) {
+	Repo = r
+}
+
 func (r *Repository) ShowSignup(c *gin.Context) {
+
 	c.HTML(http.StatusOK, "signup.html", &models.TemplateData{
 		Form: forms.New(nil), //creating an empty form
 	})
@@ -29,6 +37,9 @@ func (r *Repository) ShowLogin(c *gin.Context) {
 		Form: forms.New(nil),
 	})
 }
+
+// /a random value to match a key in te session
+var Secret = os.Getenv("VALUE_KEY")
 
 // Creating a User Account
 func (r *Repository) Signup(c *gin.Context) {
@@ -68,6 +79,10 @@ func (r *Repository) Signup(c *gin.Context) {
 }
 
 func (r *Repository) Login(c *gin.Context) {
+
+	session := sessions.Default(c)
+	session.Set("id", Secret)
+	session.Save()
 
 	err := c.Request.ParseForm()
 	if err != nil {
