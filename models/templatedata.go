@@ -10,7 +10,7 @@ type TemplateData struct {
 	Form            *forms.Form
 	Warning         string
 	Error           string
-	Flash           string
+	Flash           any
 	IsAuthenticated int
 	StringMap       map[string]string
 }

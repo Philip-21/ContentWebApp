@@ -58,6 +58,10 @@
 
        //handling the displaying of messages on each page based on the template data
         //with gets the objects 
+        {{with .Flash}}
+        notify("{{.}}","success")
+        {{end}}
+
         {{with .Error}}
         notify("{{.}}", "error")
         {{end}}

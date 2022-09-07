@@ -11,7 +11,6 @@ import (
 	"github.com/Philip-21/Content/forms"
 	"github.com/Philip-21/Content/helpers"
 	"github.com/Philip-21/Content/models"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -38,11 +37,11 @@ func (r *Repository) ShowLogin(c *gin.Context) {
 	})
 }
 
-// /a random value to match a key in te session
-var Secret = os.Getenv("VALUE_KEY")
+var Secret = os.Getenv("SESSION_KEY")
 
 // Creating a User Account
 func (r *Repository) Signup(c *gin.Context) {
+
 	err := c.Request.ParseForm()
 	if err != nil {
 		log.Println(err)
@@ -70,20 +69,19 @@ func (r *Repository) Signup(c *gin.Context) {
 	if err := r.DB.Create(&create).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		c.JSON(http.StatusInternalServerError, "User Exists")
+		helpers.SetFlash(c, "error", "User Exists")
 		return
 	}
+	session, _ := helpers.GetCookieStore().Get(c.Request, "session-cookie")
+	session.Values["user"] = create
+	session.Save(c.Request, c.Writer)
+	helpers.SetFlash(c, "message", "SignUp Successfully")
 
-	c.JSON(http.StatusOK, create)
 	c.Redirect(http.StatusSeeOther, "/")
 
 }
 
 func (r *Repository) Login(c *gin.Context) {
-
-	session := sessions.Default(c)
-	session.Set("id", Secret)
-	session.Save()
-
 	err := c.Request.ParseForm()
 	if err != nil {
 		log.Println((err))
@@ -119,12 +117,15 @@ func (r *Repository) Login(c *gin.Context) {
 
 	token, _, err := helpers.GenerateToken(user.Email)
 	if err != nil {
+		helpers.SetFlash(c, "error", "Token not generated")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, token)
 	log.Println("token generated")
+	helpers.SetFlash(c, "message", "token generated")
+	helpers.SetFlash(c, "message", "logged in successfully")
+
 	c.JSON(http.StatusOK, "logged in successfully")
 	log.Println("logged in Successfully")
 

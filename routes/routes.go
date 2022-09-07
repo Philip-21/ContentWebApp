@@ -9,16 +9,13 @@ import (
 	"github.com/Philip-21/Content/handlers"
 	"github.com/Philip-21/Content/middleware"
 	"github.com/Philip-21/Content/render"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
+
 	"github.com/gin-gonic/gin"
 )
 
 func Routes(app *handlers.Repository) *gin.Engine {
-	router := gin.Default()
 
-	store := cookie.NewStore([]byte(os.Getenv("SESSION_KEY")))
-	router.Use(sessions.Sessions("mysession", store))
+	router := gin.Default()
 
 	//loads the html file in the directory
 	//router.LoadHTMLGlob("templates/*.html")
@@ -41,8 +38,8 @@ func Routes(app *handlers.Repository) *gin.Engine {
 	router.GET("signup", api.ShowSignup)
 	router.GET("/login", api.ShowLogin)
 	router.GET("/get-contents", api.GetContent)
-	router.GET("/get-content/:id", api.GetContentByID)
 
+	//router.Use(helpers.GetCookie())
 	router.POST("/signup", api.Signup)
 	router.POST("/login", api.Login)
 
@@ -55,6 +52,7 @@ func Routes(app *handlers.Repository) *gin.Engine {
 		user.POST("/post-content", api.CreateContent)
 		user.PUT("/update-content/:id", api.UpdateContent)
 		user.DELETE("/delete-content/:id", api.DeleteContent)
+		router.GET("/get-content/:id", api.GetContentByID)
 
 	}
 	return router
