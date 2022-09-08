@@ -8,9 +8,9 @@ type TemplateData struct {
 	CSRFToken       string
 	Data            map[string]interface{}
 	Form            *forms.Form
-	Warning         string
-	Error           string
-	Flash           any
+	Warning         any
+	Error           map[string]interface{}
+	Message         map[string]interface{}
 	IsAuthenticated int
 	StringMap       map[string]string
 }

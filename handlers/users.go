@@ -25,16 +25,25 @@ func NewHandlers(r *Repository) {
 }
 
 func (r *Repository) ShowSignup(c *gin.Context) {
+	data := make(map[string]interface{})
+	data["messages"] = helpers.GetFlash(c, "message")
+
+	res := make(map[string]interface{})
+	res["errors"] = helpers.GetFlash(c, "error")
 
 	c.HTML(http.StatusOK, "signup.html", &models.TemplateData{
-		Form: forms.New(nil), //creating an empty form
+		Form:    forms.New(nil), //creating an empty form
+		Message: data,
+		Error:   res,
 	})
+
 }
 
 func (r *Repository) ShowLogin(c *gin.Context) {
 	c.HTML(http.StatusOK, "login.html", &models.TemplateData{
 		Form: forms.New(nil),
 	})
+
 }
 
 var Secret = os.Getenv("SESSION_KEY")
@@ -47,6 +56,7 @@ func (r *Repository) Signup(c *gin.Context) {
 		log.Println(err)
 		return
 	}
+
 	email := c.Request.Form.Get("email")
 	password := c.Request.Form.Get("password")
 	hashedpassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
@@ -60,11 +70,13 @@ func (r *Repository) Signup(c *gin.Context) {
 		})
 		return
 	}
+
 	create := &models.ContentUser{
 		Email:    email,
 		Password: hashedpassword,
 	}
 	c.ShouldBindJSON(&create)
+
 	//putting the post in the database(the Content_users table )
 	if err := r.DB.Create(&create).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -75,8 +87,8 @@ func (r *Repository) Signup(c *gin.Context) {
 	session, _ := helpers.GetCookieStore().Get(c.Request, "session-cookie")
 	session.Values["user"] = create
 	session.Save(c.Request, c.Writer)
-	helpers.SetFlash(c, "message", "SignUp Successfully")
-
+	helpers.SetFlash(c, "message", "SignedUp Successfully")
+	log.Println("Signed Up")
 	c.Redirect(http.StatusSeeOther, "/")
 
 }

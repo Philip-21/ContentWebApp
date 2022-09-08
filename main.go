@@ -7,7 +7,6 @@ import (
 
 	"github.com/Philip-21/Content/config"
 	"github.com/Philip-21/Content/handlers"
-	"github.com/Philip-21/Content/models"
 
 	"github.com/Philip-21/Content/database"
 	"github.com/Philip-21/Content/routes"
@@ -19,8 +18,6 @@ var app config.AppConfig
 
 func main() {
 
-	gob.Register(models.Content{})
-	gob.Register(models.ContentUser{})
 	gob.Register(map[string]int{})
 
 	//DATABASE

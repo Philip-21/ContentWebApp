@@ -16,18 +16,17 @@ func GetCookieStore() *sessions.CookieStore {
 }
 
 // used as a middleware for the handlers
-func GetCookie() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		session, _ := GetCookieStore().Get(c.Request, sessionName)
-		_, ok := session.Values["user"]
-		if !ok {
-			c.Abort()
-			return
-		}
-		session.Save(c.Request, c.Writer)
-		c.Next()
-	}
-}
+// func GetCookie(c *gin.Context) {
+// 	session, _ := GetCookieStore().Get(c.Request, sessionName)
+// 	_, ok := session.Values["user"]
+// 	if !ok {
+// 		c.Abort()
+// 		return
+
+// 	}
+// 	session.Save(c.Request, c.Writer)
+// 	c.Next()
+// }
 
 // Set adds a new message into the cookie storage.
 func SetFlash(c *gin.Context, name, value string) {

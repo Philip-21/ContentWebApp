@@ -1,0 +1,19 @@
+{{ define "messages" }}
+
+{{if index .Error "errors" }}
+<div class="errors" style="background: darksalmon; padding: 10px;">
+    {{ range index .Error "errors" }}
+    <p>{{ . }}</p>
+    {{ end }}
+</div>
+{{ end }}
+ 
+  {{ if index .Message "messages" }}
+    <div class="messages" style="background: darkseagreen; padding: 10px;">
+        {{ range index .Message "messages" }}
+        <p>{{ . }}</p>
+        {{ end }}
+    </div>
+  {{ end }}
+
+{{ end }}
