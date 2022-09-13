@@ -40,8 +40,16 @@ func (r *Repository) ShowSignup(c *gin.Context) {
 }
 
 func (r *Repository) ShowLogin(c *gin.Context) {
+	data := make(map[string]interface{})
+	data["messages"] = helpers.GetFlash(c, "message")
+
+	res := make(map[string]interface{})
+	res["errors"] = helpers.GetFlash(c, "error")
+
 	c.HTML(http.StatusOK, "login.html", &models.TemplateData{
-		Form: forms.New(nil),
+		Form:    forms.New(nil),
+		Message: data,
+		Error:   res,
 	})
 
 }
@@ -88,7 +96,7 @@ func (r *Repository) Signup(c *gin.Context) {
 	}
 	helpers.SetFlash(c, "message", "SignedUp Successfully")
 	log.Println("Signed Up")
-	//c.Redirect(http.StatusSeeOther, "/")
+	c.Redirect(http.StatusSeeOther, "/")
 
 }
 
@@ -134,7 +142,7 @@ func (r *Repository) Login(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, token)
 	log.Println("token generated")
-	helpers.SetFlash(c, "message", "token generated")
+
 	helpers.SetFlash(c, "message", "logged in successfully")
 
 	c.JSON(http.StatusOK, "logged in successfully")
