@@ -11,7 +11,7 @@ import (
 const sessionName = "session-Cookie"
 
 func GetCookieStore() *sessions.CookieStore {
-	sessionKey := os.Getenv("SESSION_KEY") //a random value to match a key in te session
+	sessionKey := os.Getenv("SESSION_KEY") //a random value to match a key in the session
 	return sessions.NewCookieStore([]byte(sessionKey))
 }
 

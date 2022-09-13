@@ -22,8 +22,9 @@
                     <div >
                         <a href="/" type="button" class="btn btn-dark" >Home</a>
                     </div>
-                    
-                    {{ template "messages" . }}
+
+                    {{ template "messages" . }} 
+                        
                     <form method="post" action="/signup" novalidate> <!--no validate wont validate until the parameters based in forms.go (email) are met  -->
                         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}"> 
                     <div class="form-group mt-3">

@@ -76,7 +76,9 @@ func (r *Repository) Signup(c *gin.Context) {
 		Password: hashedpassword,
 	}
 	c.ShouldBindJSON(&create)
-
+	session, _ := helpers.GetCookieStore().Get(c.Request, "session-cookie")
+	session.Values["user"] = &create
+	session.Save(c.Request, c.Writer)
 	//putting the post in the database(the Content_users table )
 	if err := r.DB.Create(&create).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -84,12 +86,9 @@ func (r *Repository) Signup(c *gin.Context) {
 		helpers.SetFlash(c, "error", "User Exists")
 		return
 	}
-	session, _ := helpers.GetCookieStore().Get(c.Request, "session-cookie")
-	session.Values["user"] = create
-	session.Save(c.Request, c.Writer)
 	helpers.SetFlash(c, "message", "SignedUp Successfully")
 	log.Println("Signed Up")
-	c.Redirect(http.StatusSeeOther, "/")
+	//c.Redirect(http.StatusSeeOther, "/")
 
 }
 
