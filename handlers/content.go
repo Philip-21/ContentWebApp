@@ -24,7 +24,13 @@ func (r *Repository) Home(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "home.html", models.TemplateData{})
 }
-func (r *Repository) CreateContent(c *gin.Context) {
+
+// main content page when user logs in
+func (r *Repository) ContentHome(c *gin.Context) {
+	c.HTML(http.StatusOK, "home-content.html", models.TemplateData{})
+}
+
+func (r *Repository) PostCreateContent(c *gin.Context) {
 
 	post := models.Content{
 		//postform returns the specifiedkey from a particular post
@@ -47,15 +53,15 @@ func (r *Repository) CreateContent(c *gin.Context) {
 	c.JSON(http.StatusOK, post)
 }
 
-func (r *Repository) GetContent(c *gin.Context) {
-	con, err := database.GetContents(r.DB)
-	if err != nil {
-		fmt.Println(err)
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-	c.JSON(http.StatusOK, con)
-	c.HTML(http.StatusOK, "get-post.html", &models.TemplateData{})
+func (r *Repository) GetContents(c *gin.Context) {
+	// con, err := database.GetContents(r.DB)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	c.JSON(http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
+	// c.JSON(http.StatusOK, con)
+	c.HTML(http.StatusOK, "viewall-content.html", &models.TemplateData{})
 }
 
 func (r *Repository) GetContentByID(c *gin.Context) {
@@ -93,7 +99,6 @@ func (r *Repository) DeleteContent(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-
 	c.JSON(http.StatusOK, "record deleted successfully")
 }
 

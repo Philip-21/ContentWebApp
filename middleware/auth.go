@@ -25,6 +25,7 @@ func Auth() gin.HandlerFunc {
 		}
 		// store a new key/value pair exclusively for this context
 		c.Set("email", claims.Email)
+		c.Writer.Header()
 		c.Next()
 
 	}

@@ -12,6 +12,7 @@ import (
 	"github.com/Philip-21/Content/helpers"
 	"github.com/Philip-21/Content/models"
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -140,15 +141,18 @@ func (r *Repository) Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, token)
+	_, err = json.Marshal(token)
+	if err != nil {
+		return
+	}
 	log.Println("token generated")
-
 	helpers.SetFlash(c, "message", "logged in successfully")
-
-	c.JSON(http.StatusOK, "logged in successfully")
 	log.Println("logged in Successfully")
+	c.Writer.Header()
+	c.Redirect(http.StatusSeeOther, "/content-home")
 
 }
+func (r *Repository) LogOut() {}
 
 // func (r *Repository) UserID(c *gin.Context) {
 // 	id, _, ok := middleware.GetSession(c)
