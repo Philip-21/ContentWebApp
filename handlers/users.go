@@ -79,7 +79,6 @@ func (r *Repository) Signup(c *gin.Context) {
 		})
 		return
 	}
-
 	create := &models.ContentUser{
 		Email:    email,
 		Password: hashedpassword,
