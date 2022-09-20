@@ -34,6 +34,7 @@ func SetFlash(c *gin.Context, name, value string) {
 
 	session.AddFlash(name, value)
 	session.Save(c.Request, c.Writer)
+
 }
 
 // Get gets flash messages from the cookie storage.

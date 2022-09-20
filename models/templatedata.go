@@ -6,8 +6,8 @@ import (
 
 type TemplateData struct {
 	CSRFToken       string
-	Data            map[string]interface{}
-	User            map[string]interface{}
+	SessionData     map[string]interface{}
+	User            map[string]string
 	Form            *forms.Form
 	Warning         any
 	Error           map[string]interface{}

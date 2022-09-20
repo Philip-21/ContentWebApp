@@ -52,7 +52,7 @@ func UpdateContent(db *gorm.DB, b *models.Content) error {
 
 //////////Users
 
-func GetUser(db *gorm.DB, email string) (models.ContentUser, error) {
+func Authenticate(db *gorm.DB, email string) (models.ContentUser, error) {
 
 	user := models.ContentUser{}
 	query := db.Select("content_users.*")
@@ -64,6 +64,20 @@ func GetUser(db *gorm.DB, email string) (models.ContentUser, error) {
 
 	return user, nil
 
+}
+func GetUser(db *gorm.DB, id int, email string, firstname string, lastname string) (models.ContentUser, error) {
+	user := models.ContentUser{
+		ID:        id,
+		Email:     email,
+		FirstName: firstname,
+		LastName:  lastname,
+	}
+	//result := db.Find(&users,"id = ? ")
+	err := db.Table("content_users").Select("email", "firstname", "lastname").Where("id = ?", id).Scan(&user)
+	if err != nil {
+		return user, gorm.ErrRecordNotFound
+	}
+	return user, nil
 }
 
 func UserID(db *gorm.DB, id uint) (models.ContentUser, error) {

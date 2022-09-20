@@ -20,10 +20,6 @@ import (
 
 var Repo *Repository //used in the main func to run all handlers
 
-func (r *Repository) AboutUser(c *gin.Context) {
-	c.HTML(http.StatusOK, "user.html", &models.TemplateData{})
-}
-
 func (r *Repository) ShowSignup(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["messages"] = helpers.GetFlash(c, "message")
@@ -88,9 +84,15 @@ func (r *Repository) Signup(c *gin.Context) {
 		Password:  hashedpassword,
 	}
 	c.ShouldBindJSON(&create)
-	session, _ := helpers.GetCookieStore().Get(c.Request, "session-cookie")
-	session.Values["user"] = &create
-	session.Save(c.Request, c.Writer)
+
+	session, _ := helpers.GetCookieStore().Get(c.Request, "user")
+	session.Values["user-signup"] = &create
+	//Save must be called before writing to the response,
+	// otherwise the session cookie will not be sent to the client.
+	err = session.Save(c.Request, c.Writer)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
 	//putting the post in the database(the Content_users table )
 	if err := r.DB.Create(&create).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -100,8 +102,28 @@ func (r *Repository) Signup(c *gin.Context) {
 	}
 	helpers.SetFlash(c, "message", "SignedUp Successfully")
 	log.Println("Signed Up")
-	c.Redirect(http.StatusSeeOther, "/")
+	c.Redirect(http.StatusSeeOther, "/content-home")
 
+}
+
+func (r *Repository) UserProfile(c *gin.Context) {
+
+	var user models.ContentUser
+	profile, err := helpers.GetCookieStore().Get(c.Request, "user")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Couldnt Get session"})
+	}
+	datasession := make(map[string]interface{})
+	datasession["user"] = profile
+	DisplayProf := make(map[string]string)
+	DisplayProf["email"] = user.Email
+	DisplayProf["firstname"] = user.FirstName
+	DisplayProf["lastname"] = user.LastName
+
+	c.HTML(http.StatusOK, "user.html", &models.TemplateData{
+		SessionData: datasession,
+		User:        DisplayProf,
+	})
 }
 
 func (r *Repository) Login(c *gin.Context) {
@@ -125,17 +147,23 @@ func (r *Repository) Login(c *gin.Context) {
 		Email:    email,
 		Password: password,
 	}
-	user, err := database.GetUser(r.DB, req.Email)
+	user, err := database.Authenticate(r.DB, req.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("incorrect email %s", req.Email)})
 		return
 	}
-
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err == bcrypt.ErrMismatchedHashAndPassword {
 		errors.New("incorrect password")
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("incorrect password %s", req.Password)})
 		return
+	}
+	session, _ := helpers.GetCookieStore().Get(c.Request, "login")
+	session.Values["email"] = req.Email
+	session.Values["password"] = req.Password
+	err = session.Save(c.Request, c.Writer)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
 	token, _, err := helpers.GenerateToken(user.Email)
@@ -155,6 +183,7 @@ func (r *Repository) Login(c *gin.Context) {
 	c.Redirect(http.StatusSeeOther, "/content-home")
 
 }
+
 func (r *Repository) LogOut() {}
 
 // func (r *Repository) UserID(c *gin.Context) {
