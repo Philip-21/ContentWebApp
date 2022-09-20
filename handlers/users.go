@@ -18,11 +18,10 @@ import (
 
 //---------------initialize a new repository for users----------------
 
-var Repo *Repository
+var Repo *Repository //used in the main func to run all handlers
 
-// NewHandlers sets the repository for the handlers
-func NewHandlers(r *Repository) {
-	Repo = r
+func (r *Repository) AboutUser(c *gin.Context) {
+	c.HTML(http.StatusOK, "user.html", &models.TemplateData{})
 }
 
 func (r *Repository) ShowSignup(c *gin.Context) {
@@ -67,10 +66,13 @@ func (r *Repository) Signup(c *gin.Context) {
 	}
 
 	email := c.Request.Form.Get("email")
+	firstname := c.Request.Form.Get("firstname")
+	lastname := c.Request.Form.Get("lastname")
 	password := c.Request.Form.Get("password")
 	hashedpassword, _ := bcrypt.GenerateFromPassword([]byte(password), 8)
+
 	form := forms.New(c.Request.Form)
-	form.Required("email", "password")
+	form.Required("email", "password", "firstname", "lastname")
 	form.ValidEmail("email")
 	form.MinLength("password", 8)
 	if !form.Valid() {
@@ -80,8 +82,10 @@ func (r *Repository) Signup(c *gin.Context) {
 		return
 	}
 	create := &models.ContentUser{
-		Email:    email,
-		Password: hashedpassword,
+		Email:     email,
+		FirstName: firstname,
+		LastName:  lastname,
+		Password:  hashedpassword,
 	}
 	c.ShouldBindJSON(&create)
 	session, _ := helpers.GetCookieStore().Get(c.Request, "session-cookie")
