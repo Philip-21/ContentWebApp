@@ -106,26 +106,6 @@ func (r *Repository) Signup(c *gin.Context) {
 
 }
 
-func (r *Repository) UserProfile(c *gin.Context) {
-
-	var user models.ContentUser
-	profile, err := helpers.GetCookieStore().Get(c.Request, "user")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Couldnt Get session"})
-	}
-	datasession := make(map[string]interface{})
-	datasession["user"] = profile
-	DisplayProf := make(map[string]string)
-	DisplayProf["email"] = user.Email
-	DisplayProf["firstname"] = user.FirstName
-	DisplayProf["lastname"] = user.LastName
-
-	c.HTML(http.StatusOK, "user.html", &models.TemplateData{
-		SessionData: datasession,
-		User:        DisplayProf,
-	})
-}
-
 func (r *Repository) Login(c *gin.Context) {
 	err := c.Request.ParseForm()
 	if err != nil {
@@ -158,7 +138,7 @@ func (r *Repository) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("incorrect password %s", req.Password)})
 		return
 	}
-	session, _ := helpers.GetCookieStore().Get(c.Request, "login")
+	session, _ := helpers.GetCookieStore().Get(c.Request, "user")
 	session.Values["email"] = req.Email
 	session.Values["password"] = req.Password
 	err = session.Save(c.Request, c.Writer)
@@ -182,6 +162,27 @@ func (r *Repository) Login(c *gin.Context) {
 	c.Writer.Header()
 	c.Redirect(http.StatusSeeOther, "/content-home")
 
+}
+
+// viewing your profile when loged in
+func (r *Repository) UserProfile(c *gin.Context) {
+
+	var user models.ContentUser
+	profile, err := helpers.GetCookieStore().Get(c.Request, "user")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Couldnt Get session"})
+	}
+	datasession := make(map[string]interface{})
+	datasession["user"] = profile
+	DisplayProf := make(map[string]string)
+	DisplayProf["email"] = user.Email
+	DisplayProf["firstname"] = user.FirstName
+	DisplayProf["lastname"] = user.LastName
+
+	c.HTML(http.StatusOK, "user.html", &models.TemplateData{
+		SessionData: datasession,
+		User:        DisplayProf,
+	})
 }
 
 func (r *Repository) LogOut() {}
