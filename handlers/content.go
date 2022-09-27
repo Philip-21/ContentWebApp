@@ -27,6 +27,7 @@ func (r *Repository) Home(c *gin.Context) {
 
 // main content page when user logs in
 func (r *Repository) ContentHome(c *gin.Context) {
+
 	c.HTML(http.StatusOK, "home-content.html", models.TemplateData{})
 }
 

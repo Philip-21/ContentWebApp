@@ -9,62 +9,42 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-type SignedDetails struct {
-	Email string
+type jwtCustomClaims struct {
+	Email string `json:"email"`
+	Admin bool   `json:"admin"`
 	jwt.StandardClaims
 }
 
-// var SECRET_KEY = fmt.Sprintf("SECRET_KEY=%s", connect.SecretKey)
 var SECRET_KEY = os.Getenv("SECRET_KEY")
 
-func GenerateToken(email string) (signedToken string, signedRefreshToken string, err error) {
-	//generate new token
-	claims := &SignedDetails{
-		Email: email,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
+func GenerateToken(email string, admin bool) (string, error) {
+	claims := &jwtCustomClaims{
+		email,
+		admin,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+			IssuedAt:  time.Now().Unix(),
 		},
 	}
-	//gets a new token if initial token has expired
-	refreshClaims := &SignedDetails{
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
-		},
-	}
-	//call the jwt
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SECRET_KEY))
-	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(SECRET_KEY))
+	//create token with claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	//generate token using secret key
+	t, err := token.SignedString([]byte(SECRET_KEY))
 	if err != nil {
 		log.Panic(err)
-		return
 	}
-	return token, refreshToken, err
+	return t, nil
+
 }
 
-// confirms the token to be used in the middlewre
-func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
-	token, err := jwt.ParseWithClaims(
-		signedToken,
-		&SignedDetails{},
-		func(token *jwt.Token) (interface{}, error) {
-			return []byte(SECRET_KEY), nil
-		},
-	)
-	if err != nil {
-		msg = err.Error()
-		return
-	}
-	claims, ok := token.Claims.(*SignedDetails)
-	if !ok {
-		msg = fmt.Sprintf("invalid token ")
-		msg = err.Error()
-		return
-	}
-	//additinal checks
-	if claims.ExpiresAt < time.Now().Local().Unix() {
-		msg = fmt.Sprintf("token is expired")
-		msg = err.Error()
-		return
-	}
-	return claims, msg
+func ValidateToken(tokenString string) (*jwt.Token, error) {
+	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Signing method validation
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		// Return the secret signing key
+		return []byte(SECRET_KEY), nil
+	})
+
 }

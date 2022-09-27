@@ -50,6 +50,11 @@ func (r *Repository) ShowLogin(c *gin.Context) {
 
 }
 
+// a Temporary func
+func (r *Repository) Use(c *gin.Context) {
+	c.HTML(http.StatusOK, "userprofile.html", &models.TemplateData{})
+}
+
 var Secret = os.Getenv("SESSION_KEY")
 
 // Creating a User Account
@@ -102,7 +107,7 @@ func (r *Repository) Signup(c *gin.Context) {
 	}
 	helpers.SetFlash(c, "message", "SignedUp Successfully")
 	log.Println("Signed Up")
-	c.Redirect(http.StatusSeeOther, "/content-home")
+	c.Redirect(http.StatusSeeOther, "/user/content-home")
 
 }
 
@@ -130,6 +135,7 @@ func (r *Repository) Login(c *gin.Context) {
 	user, err := database.Authenticate(r.DB, req.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("incorrect email %s", req.Email)})
+		c.Writer.Header().Set("Content-Type", "application/json")
 		return
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
@@ -138,6 +144,23 @@ func (r *Repository) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("incorrect password %s", req.Password)})
 		return
 	}
+
+	token, err := helpers.GenerateToken(email, true)
+	if err != nil {
+		helpers.SetFlash(c, "error", "Token not generated")
+		c.Writer.Header().Set("Content-Type", "application/json")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("token generated")
+	_, err = json.Marshal(token)
+	if err != nil {
+		return
+	}
+	json.NewEncoder(c.Writer).Encode(token)
+	c.Request.Header.Set("Token", token)
+	c.Writer.Header().Set("Content-Type", "application/json")
+	//helpers.SetFlash(c, "message", "logged in successfully")
 	session, _ := helpers.GetCookieStore().Get(c.Request, "user")
 	session.Values["email"] = req.Email
 	session.Values["password"] = req.Password
@@ -145,22 +168,8 @@ func (r *Repository) Login(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
-
-	token, _, err := helpers.GenerateToken(user.Email)
-	if err != nil {
-		helpers.SetFlash(c, "error", "Token not generated")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	_, err = json.Marshal(token)
-	if err != nil {
-		return
-	}
-	log.Println("token generated")
-	helpers.SetFlash(c, "message", "logged in successfully")
+	c.Redirect(http.StatusSeeOther, "/user/content-home")
 	log.Println("logged in Successfully")
-	c.Writer.Header()
-	c.Redirect(http.StatusSeeOther, "/content-home")
 
 }
 

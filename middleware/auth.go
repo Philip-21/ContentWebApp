@@ -1,33 +1,33 @@
 package middleware
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/Philip-21/Content/helpers"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		clientToken := c.Request.Header.Get("token")
-		if clientToken == "" {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("No Authorization header Provided ")})
-			c.Abort()
-			return
+		const BEARER_SCHEMA = "Bearer"
+		authHeader := c.GetHeader("Authorization")
+		tokenString := authHeader[len(BEARER_SCHEMA):]
+
+		token, err := helpers.ValidateToken(tokenString)
+
+		if token.Valid {
+			claims := token.Claims.(jwt.MapClaims)
+			log.Println("Claims[email]: ", claims["email"])
+			log.Println("Claims[Admin]: ", claims["admin"])
+			log.Println("Claims[IssuedAt]: ", claims["iat"])
+			log.Println("Claims[ExpiresAt]: ", claims["exp"])
+
+		} else {
+			log.Println(err)
+			c.AbortWithStatus(http.StatusUnauthorized)
 		}
-		//validate token
-		claims, err := helpers.ValidateToken(clientToken)
-		if err != "" {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
-			c.Abort()
-			return
-		}
-		// store a new key/value pair exclusively for this context
-		c.Set("email", claims.Email)
-		c.Writer.Header()
-		c.Next()
 
 	}
-
 }

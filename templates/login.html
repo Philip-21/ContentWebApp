@@ -24,7 +24,7 @@
                      </div>
                      
                  {{ template "messages" . }} 
-                     <form method="post" action="/login" novalidate> <!--no validate wont validate until the parameters based in forms.go (email) are met  -->
+                     <form method="post" action="/post/login" novalidate> <!--no validate wont validate until the parameters based in forms.go (email) are met  -->
                             <!-- <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">  -->
                             <div class="form-group mt-3">
                             <label for="email">Email:</label>

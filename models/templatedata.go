@@ -15,8 +15,3 @@ type TemplateData struct {
 	IsAuthenticated int
 	StringMap       map[string]string
 }
-
-// func AddData(td *TemplateData, c *gin.Context) *TemplateData {
-// 	td.Flash = app.Session.PopString(c.Request.Context(), "flash")
-// 	return td
-// }
