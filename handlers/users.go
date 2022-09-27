@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -132,16 +131,10 @@ func (r *Repository) Login(c *gin.Context) {
 		Email:    email,
 		Password: password,
 	}
-	user, err := database.Authenticate(r.DB, req.Email)
+	user, err := database.Authenticate(r.DB, req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("incorrect email %s", req.Email)})
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("incorrect credentials %s", user)})
 		c.Writer.Header().Set("Content-Type", "application/json")
-		return
-	}
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-	if err == bcrypt.ErrMismatchedHashAndPassword {
-		errors.New("incorrect password")
-		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("incorrect password %s", req.Password)})
 		return
 	}
 
@@ -157,13 +150,13 @@ func (r *Repository) Login(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	json.NewEncoder(c.Writer).Encode(token)
-	c.Request.Header.Set("Token", token)
+
+	c.Request.Header.Set("Authorization", token)
 	c.Writer.Header().Set("Content-Type", "application/json")
 	//helpers.SetFlash(c, "message", "logged in successfully")
+
 	session, _ := helpers.GetCookieStore().Get(c.Request, "user")
-	session.Values["email"] = req.Email
-	session.Values["password"] = req.Password
+	session.Values["user"] = user
 	err = session.Save(c.Request, c.Writer)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
