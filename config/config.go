@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/spf13/viper"
 )
 
@@ -10,6 +11,7 @@ type AppConfig struct {
 	//TemplateCache map[string]*template//
 	InfoLog      *log.Logger //a standard library that writes information to log files
 	ErrorLog     *log.Logger //this allows us to write logs and handle errors efficiently
+	Session      *scs.SessionManager
 	InProduction bool
 }
 

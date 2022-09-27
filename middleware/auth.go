@@ -11,5 +11,7 @@ func Auth() gin.HandlerFunc {
 		tokenString := authHeader
 
 		helpers.ValidateToken(tokenString)
+
+		//helpers.IsAuthenticted(&gin.Context{})
 	}
 }

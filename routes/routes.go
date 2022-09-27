@@ -24,7 +24,6 @@ func AddData(td *models.TemplateData, c *gin.Context) *models.TemplateData {
 
 func Routes(app *handlers.Repository) *gin.Engine {
 	gob.Register(models.ContentUser{})
-
 	router := gin.Default()
 	router.Use(gin.Logger())
 	router.Use(cors.New(cors.Config{
